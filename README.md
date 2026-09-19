@@ -313,7 +313,8 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 | **T9** | `templates/T9-杂志排版.md` | 超大衬线标题 + 分栏 + 首字下沉 + 唯一正红 | 高级、克制、像杂志内页 | 150–220s |
 | **T10** | `templates/T10-黑金权威.md` | 近黑底 + 双金框 + 四角标记 + 金印落定 | 庄重、正式、像官方文件 | 120–200s |
 
-> ⚠️ **T7–T10 的诚实状态**：编译通过、静帧渲染目检通过（无溢出、中文正常），**没跑过完整视频、没实测时长、没适配竖版**。首次使用要预留一轮调试。
+> ✅ **T7–T10 的状态**：四套都**真配了 TTS 音频、真跑了完整渲染、真过了后处理两关**，成品全部达标 `yuv420p(tv, bt709)`。
+> ⚠️ 仍缺：竖版适配、封面设计、长片（185s+）压测。
 > 组件源码在 `templates/code/`，每套都有**单页演示**和**完整视频组件**两个形态。
 
 ### 新样式预览（实拍静帧）
@@ -349,6 +350,23 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 | ![T9 视频组件](assets/preview/video/T9MagazineVideo_s2.png) | ![T10 视频组件](assets/preview/video/T10BlackGoldVideo_s2.png) |
 
 关键设计：**动画全部基于场景内局部帧 `lf = frame - section.start_frame`**，不用绝对帧——这样改某个场景的时长，动画节奏不用跟着改。
+
+### 端到端样片（真配音 + 真渲染 + 真后处理）
+
+一份脚本，四种视觉处理——**四套共用同一份 TTS 音频和 `timing.json`**。
+
+📹 **[样片：T7 纸感笔记 · 36 秒](assets/sample/样片-T7纸感笔记-36秒.mp4)**
+
+| 项 | 实测值 |
+|---|---|
+| 配音 | `_gen_tts.py`，`zh-CN-YunxiNeural` +16%，5 段 / 36.58s / 1097 帧 |
+| 音频体检 | 全过（RMS 0.053–0.058，阈值 0.20） |
+| 异常恢复 | 中途 4 次 `ClientConnectorError`，重试自动恢复 |
+| 渲染 | 四套各 1097 帧，1m13s – 2min（`--gl=angle`） |
+| 后处理 | `loudnorm I=-14` + `x264-params` 写 bt709，两关全过 |
+| 验收 | 四套全部 `yuv420p(tv, bt709, progressive)` + AAC 192k/48kHz/stereo |
+
+从成品 mp4 抽帧核对：`timing.json` 里 s3 第 2 句是 `[25.15–29.30]`，26.0s 抽帧显示的正是那句——**词边界 → timing.json → 场景引擎 → 字幕 整条链路对齐**。
 
 ### 决策树
 
@@ -552,7 +570,7 @@ flowchart TD
 
 ## 已知坑
 
-20 条实测坑完整版见 [`references/gotchas.md`](references/gotchas.md)。最常踩的 8 条：
+21 条实测坑完整版见 [`references/gotchas.md`](references/gotchas.md)。最常踩的 8 条：
 
 | # | 坑 | 修法 |
 |---|---|---|
@@ -593,7 +611,7 @@ mcm-video-pipeline/
 ├─ SKILL.md                       ← Agent 主入口：13 步 + 确认门协议
 ├─ references/
 │  ├─ pipeline.md                 全流程技术规格、参数速查、动效语法
-│  ├─ gotchas.md                  环境前置 + 20 条实测坑
+│  ├─ gotchas.md                  环境前置 + 21 条实测坑
 │  ├─ script-and-compliance.md    口播稿规则与合规红线
 │  └─ delivery.md                 4 份交付文档模板
 ├─ templates/
@@ -629,7 +647,11 @@ mcm-video-pipeline/
 └─ assets/
    ├─ 01-pipeline-overview.svg    总体流程
    ├─ 02-gate-protocol.svg        确认门协议
-   └─ 03-template-decision-tree.svg  模板决策树
+   ├─ 03-template-decision-tree.svg  模板决策树
+   ├─ preview/                    十套样式的实拍静帧 + 视频组件抽帧
+   │  ├─ T1-T10 各一张
+   │  └─ video/                   同场景四风格对比
+   └─ sample/                     端到端样片（T7 纸感笔记 36 秒）
 ```
 
 ### 推送前建议先过一遍图表校验

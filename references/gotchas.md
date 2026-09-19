@@ -279,3 +279,50 @@ if abs(actual - expected) > 0.15:
 ⚠️ 不要靠「去掉 `alignItems`」来修——那会让子元素 `stretch` 拉伸变形，顶栏里的小图标会被撑开。
 
 **这两条（19 / 20）在 T7–T10 四套新样式的首轮渲染里，4 张图踩了 3 张**。属于 `AbsoluteFill` 的高频陷阱，写新样式时先按这两条自查一遍。
+
+---
+
+## 21. Python 脚本写文件会把 LF 转成 CRLF（Windows）
+
+**症状**：`timing.json` / `.srt` / `.md` 在 Windows 上被写成 CRLF，仓库里换行符不统一。
+如果这个文件是 Markdown 且含 Mermaid 块，还会**静默搞崩图表校验**（见 `doc-diagram-qa` 技能的同类条目）。
+
+**根因**：Python 在 Windows 上 text 模式默认 `newline=None`，写入时 `\n` 全部转成 `\r\n`。
+
+**受影响的位置**（`_gen_tts.py` 里三处，2026-09-20 已修）：
+
+```python
+# ✗ 之前
+with open(os.path.join(BASE, "timing.json"), "w", encoding="utf-8") as f:
+    json.dump(timing, f, ensure_ascii=False, indent=2)
+
+# ✓ 现在
+with open(os.path.join(BASE, "timing.json"), "w", encoding="utf-8", newline="\n") as f:
+    json.dump(timing, f, ensure_ascii=False, indent=2)
+```
+
+三处都要改：`timing.json`、`podcast_audio.srt`、`phonemes.json`。
+
+**其他场景的修法**：
+
+| 写法 | 处理 |
+|---|---|
+| `open(..., "w", encoding="utf-8")` | 加 `newline="\n"` |
+| `pathlib.Path(...).write_text(t, encoding="utf-8")` | 加 `newline="\n"` |
+| 任何写法 | 或改用 `write_bytes(t.encode("utf-8"))` |
+
+**批量修正已有文件**：
+
+```python
+import pathlib
+for p in pathlib.Path(".").rglob("*"):
+    if p.is_file() and ".git" not in p.parts:
+        raw = p.read_bytes()
+        if b"\r\n" in raw:
+            p.write_bytes(raw.replace(b"\r\n", b"\n"))
+```
+
+**根治**：仓库根放 `.gitattributes` 写 `* text=auto eol=lf`——git 会在提交时归一化，
+但**工作区仍是 CRLF**，所以本地校验脚本还是会报，最好从写入端就修掉。
+
+**自查命令**：`node tools/check-eol.mjs <仓库根目录>`（本仓库已带）

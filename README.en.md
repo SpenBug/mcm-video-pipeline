@@ -209,7 +209,8 @@ Ten templates. T1–T5 have **shipped source projects** behind them (measured va
 | **T9** | `templates/T9-杂志排版.md` | Oversized serif headline + columns + drop cap + a single red accent | Editorial, restrained, like a magazine spread | 150–220 s |
 | **T10** | `templates/T10-黑金权威.md` | Near-black + double gold frame + corner marks + a seal that stamps down | Formal, authoritative, like an official document | 120–200 s |
 
-> ⚠️ **Honest status for T7–T10**: they compile and their still frames were visually inspected (no overflow, CJK renders correctly), but they have **never been rendered as a full video, never had their duration measured, and have no portrait adaptation**.
+> ✅ **Status of T7–T10**: all four have been **given real TTS audio, fully rendered, and run through both post-processing passes**. Every master meets `yuv420p(tv, bt709)`.
+> ⚠️ Still missing: portrait adaptation, cover designs, and a long-form (185 s+) stress test.
 
 ### Style previews (real still frames)
 
@@ -244,6 +245,23 @@ Below: **the same scene (s2) rendered in all four styles** — identical content
 | ![T9 video component](assets/preview/video/T9MagazineVideo_s2.png) | ![T10 video component](assets/preview/video/T10BlackGoldVideo_s2.png) |
 
 Key design: **all animation is driven by the scene-local frame `lf = frame - section.start_frame`**, never by absolute frames — so changing a scene's duration never requires touching the animation.
+
+### End-to-end sample (real audio, real render, real post-processing)
+
+One script, four visual treatments — **all four share the same TTS audio and the same `timing.json`**.
+
+📹 **[Sample: T7 paper note · 36 seconds](assets/sample/样片-T7纸感笔记-36秒.mp4)**
+
+| Item | Measured |
+|---|---|
+| Voiceover | `_gen_tts.py`, `zh-CN-YunxiNeural` +16%, 5 sections / 36.58 s / 1097 frames |
+| Audio health check | All passed (RMS 0.053–0.058, threshold 0.20) |
+| Failure recovery | 4 × `ClientConnectorError` mid-run, recovered automatically by retry |
+| Render | 1097 frames each, 1m13s – 2min (`--gl=angle`) |
+| Post-processing | `loudnorm I=-14` + `x264-params` bt709 tags, both passes clean |
+| Acceptance | All four masters: `yuv420p(tv, bt709, progressive)` + AAC 192k/48kHz/stereo |
+
+Cross-checked by extracting a frame from the finished MP4: `timing.json` puts s3's second sentence at `[25.15–29.30]`, and the frame at 26.0 s shows exactly that sentence — **word boundaries → timing.json → scene engine → subtitle, the whole chain is aligned**.
 
 The four share a scene engine in `templates/code/src/remotion/shared/`:
 
@@ -404,7 +422,7 @@ ffmpeg -y -i out/_1.mp4 -c:v libx264 -pix_fmt yuv420p \
 
 ## Known pitfalls
 
-20 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The eight most common:
+21 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The eight most common:
 
 | # | Pitfall | Fix |
 |---|---|---|
@@ -477,7 +495,9 @@ mcm-video-pipeline/
 └─ assets/
    ├─ 01-pipeline-overview.svg
    ├─ 02-gate-protocol.svg
-   └─ 03-template-decision-tree.svg
+   ├─ 03-template-decision-tree.svg
+   ├─ preview/                    Real still frames, plus video-component frames
+   └─ sample/                     End-to-end sample (T7 paper note, 36 s)
 ```
 
 ### Run the diagram checks before pushing

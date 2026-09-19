@@ -183,9 +183,35 @@
 - [ ] `ffmpeg -i` 探测到 `yuv420p(tv, bt709, progressive)`
 - [ ] 音频 AAC 192kbps / 48000 Hz / stereo
 - [ ] loudnorm I=-14 已应用
-- [ ] `timing.json` 的 `total_duration` 与成品时长一致（±0.1s）
+- [ ] **视频流**帧数与 `timing.json` 的 `total_frames` 一致（±1 帧）
 - [ ] 封面两张尺寸正确（1200×900 / 1080×1440）
 - [ ] `podcast.txt` ↔ `VOICE_TEXTS` ↔ `timing.json` 三处 name 一致
 - [ ] 四份文档齐全，`publish_info.md` 已如实填实测值
 - [ ] 已进统一交付包，交付包 README 表格已加行
 - [ ] 用户已确认标题
+
+### ⚠️ 核对时长要量视频流，不要量容器
+
+**容器时长永远比视频流长约 0.1–0.2s**，因为 AAC 编码器会填充（priming samples + 帧对齐）。
+拿容器时长去比 `timing.json` 会误判成「时间轴错位」。
+
+```bash
+# ✗ 量容器 —— 会多出 0.13s 左右的 AAC 填充，误判
+ffmpeg -i 成品.mp4 2>&1 | grep Duration
+
+# ✓ 量视频流 —— 应精确等于 total_frames / fps
+ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames,duration \
+  -of default=noprint_wrappers=1 成品.mp4
+```
+
+实测（T7 纸感笔记样片，1097 帧 @30fps）：
+
+| 项 | 值 |
+|---|---|
+| `timing.json` total_frames | 1097 |
+| 视频流 nb_frames | 1097 ✓ |
+| 视频流 duration | 36.5667s（= 1097/30）✓ |
+| 音频流 duration | 36.70s |
+| **容器 duration** | **36.70s** ← 比视频流多 0.13s，是 AAC 填充，**正常** |
+
+所以验收标准写成「视频流帧数一致」而不是「容器时长一致」。

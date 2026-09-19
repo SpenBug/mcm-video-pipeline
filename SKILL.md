@@ -306,7 +306,7 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 
 ## 4. 模板索引
 
-**10 套模板**：T1–T5 有已交付的真源项目（参数是实测值）；T7–T10 是新设计的样式，已渲染静帧验证但**未跑过完整视频**。
+**10 套模板**：T1–T5 有已交付的真源项目（参数是实测值）；T7–T10 是新设计的样式，**已端到端验证**（真配 TTS 音频 + 真渲染 + 过后处理两关，成品全部达标 `yuv420p(tv, bt709)`），但**未适配竖版、无封面、未做长片压测**。
 
 | 档 | 文件 | 适用 | 时长 | 实测参考 |
 |---|---|---|---|---|
@@ -316,10 +316,10 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | T4 | `templates/T4-奶油论文图解.md` | 论文截图 / 题目原图逐句讲解，轻量 | 220–260s | `_tools_pipeline` 真题 242.15s |
 | T5 | `templates/T5-赛事资讯快报.md` | 赛程 / 报名 / 奖金 / 资格 资讯速报 | 180–200s | 华为杯 186s |
 | T6 | `templates/T6-封面与竖版适配.md` | **叠加档**，给任意一档补封面 / 竖版 | — | 全期通用 |
-| T7 | `templates/T7-纸感笔记.md` | 知识点讲解 / 公式推导 / 复盘笔记，像学习笔记 | 150–240s | ⚠️ 新设计，未实测 |
-| T8 | `templates/T8-数据仪表盘.md` | 结果检验 / 灵敏度 / 性能对比，数字为主 | 120–200s | ⚠️ 新设计，未实测 |
-| T9 | `templates/T9-杂志排版.md` | 观点输出 / 方法论 / 系列开篇收尾 | 150–220s | ⚠️ 新设计，未实测 |
-| T10 | `templates/T10-黑金权威.md` | 评审细则 / 处罚条款 / 奖项公布 / 红线 | 120–200s | ⚠️ 新设计，未实测 |
+| T7 | `templates/T7-纸感笔记.md` | 知识点讲解 / 公式推导 / 复盘笔记，像学习笔记 | 150–240s | ✅ 端到端已验证 |
+| T8 | `templates/T8-数据仪表盘.md` | 结果检验 / 灵敏度 / 性能对比，数字为主 | 120–200s | ✅ 端到端已验证 |
+| T9 | `templates/T9-杂志排版.md` | 观点输出 / 方法论 / 系列开篇收尾 | 150–220s | ✅ 端到端已验证 |
+| T10 | `templates/T10-黑金权威.md` | 评审细则 / 处罚条款 / 奖项公布 / 红线 | 120–200s | ✅ 端到端已验证 |
 
 **T7–T10 的组件源码在 `templates/code/`**，每套有**两个形态**：单页演示（`T7PaperNote.tsx`，看风格长什么样）和**完整视频组件**（`T7PaperNoteVideo.tsx`，读 `timing.json` 按帧切场景 + 句级字幕，能直接出片）。
 
@@ -341,7 +341,7 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | 文件 | 什么时候读 |
 |---|---|
 | `references/pipeline.md` | S6–S12，全流程技术规格、参数速查表 |
-| `references/gotchas.md` | 任何一步报错时；环境前置；18 条实测坑 |
+| `references/gotchas.md` | 任何一步报错时；环境前置；21 条实测坑 |
 | `references/script-and-compliance.md` | S3 / S5，口播稿规则与合规红线 |
 | `references/delivery.md` | S13，四份交付文档模板 |
 | `templates/README.md` | S6，模板选用决策树 |

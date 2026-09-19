@@ -4,12 +4,16 @@ out/
 dist/
 *.tsbuildinfo
 
-# 视频工程的中间产物
+# 视频工程的中间产物（大体积，不进仓库）
 _tts_tmp/
 _tts_parts/
 *.wav
 *.mp3
 *.mp4
+
+# 例外：样片要进仓库——它是「这条流水线真能出片」的证据
+!assets/sample/
+!assets/sample/*.mp4
 
 # 系统
 .DS_Store
@@ -26,3 +30,7 @@ _preview/
 # 临时文件
 *.tmp
 .git-commit-msg*
+
+.commitmsg
+
+.commitmsg

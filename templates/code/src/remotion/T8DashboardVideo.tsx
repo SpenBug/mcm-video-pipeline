@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, interpolate, Easing } from "remotion";
+import { AbsoluteFill, Audio, interpolate, Easing, staticFile } from "remotion";
 import timingData from "../../videos/demo/timing.json";
 import { useScene } from "./shared/scene";
 import { Subtitle } from "./shared/Subtitle";
@@ -323,6 +323,9 @@ export const T8DashboardVideo: React.FC = () => {
           maxWidth: 1180,
         }}
       />
+      {/* 音轨：人声 + BGM 混音（_gen_tts.py 产出；系列惯例播 mixed_audio.wav 而不是 podcast_audio.wav） */}
+      <Audio src={staticFile("mixed_audio.wav")} />
+
     </AbsoluteFill>
   );
 };
