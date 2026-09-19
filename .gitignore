@@ -22,3 +22,7 @@ desktop.ini
 
 # 图表校验的临时输出
 _preview/
+
+# 临时文件
+*.tmp
+.git-commit-msg*
