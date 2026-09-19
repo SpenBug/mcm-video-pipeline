@@ -1,6 +1,6 @@
 # mcm-video-pipeline
 
-> A production pipeline for math-modeling (MCM/CUMCM) explainer videos — 13 gated steps, 6 reusable templates, and a mandatory confirmation gate before every step.
+> A production pipeline for math-modeling (MCM/CUMCM) explainer videos — 13 gated steps, 10 reusable templates, and a mandatory confirmation gate before every step.
 
 **English** | [中文](README.md)
 
@@ -187,7 +187,9 @@ Measured: episode 12 was 221 s against a 190 s target → trimmed ~7% + raised r
 
 ## Template library
 
-Six templates, all with a **shipped source project** behind them.
+Ten templates. T1–T5 have **shipped source projects** behind them (measured values); T7–T10 are **newly designed styles**, render-verified but never run as a full video.
+
+### With shipped sources (measured values)
 
 | ID | File | Positioning | Duration | Scenes | Reference |
 |---|---|---|---|---|---|
@@ -196,7 +198,60 @@ Six templates, all with a **shipped source project** behind them.
 | **T3** | `templates/T3-真题长拆解.md` | One past problem, all sub-questions, end to end | 240–320 s | 6–10 | Special A 286.37 s, B 319.10 s |
 | **T4** | `templates/T4-奶油论文图解.md` | Paper figures / problem scans explained line by line; light theme | 220–260 s | 6 chapters / 30 lines | 242.15 s |
 | **T5** | `templates/T5-赛事资讯快报.md` | Competition news: schedule, registration, prizes, eligibility | 180–200 s | 10 | 186 s |
-| **T6** | `templates/T6-封面与竖版适配.md` | **Add-on**: covers and portrait adaptation for any of T1–T5 | — | — | All episodes |
+| **T6** | `templates/T6-封面与竖版适配.md` | **Add-on**: covers and portrait adaptation for any other template | — | — | All episodes |
+
+### Newly designed styles (render-verified, not yet run as full videos)
+
+| ID | File | Positioning | Visual character | Duration |
+|---|---|---|---|---|
+| **T7** | `templates/T7-纸感笔记.md` | Off-white paper + binding line + highlighter + **brush-script margin notes** | Plain, warm, like a study notebook | 150–240 s |
+| **T8** | `templates/T8-数据仪表盘.md` | Ring gauges + **monospaced numerals** + progressively drawn trend line | Precise, technical, like a monitoring wall | 120–200 s |
+| **T9** | `templates/T9-杂志排版.md` | Oversized serif headline + columns + drop cap + a single red accent | Editorial, restrained, like a magazine spread | 150–220 s |
+| **T10** | `templates/T10-黑金权威.md` | Near-black + double gold frame + corner marks + a seal that stamps down | Formal, authoritative, like an official document | 120–200 s |
+
+> ⚠️ **Honest status for T7–T10**: they compile and their still frames were visually inspected (no overflow, CJK renders correctly), but they have **never been rendered as a full video, never had their duration measured, and have no portrait adaptation**.
+
+### Style previews (real still frames)
+
+**T7 · Paper note** — the brush-script margin note is the soul of this style
+
+![T7 paper note](assets/preview/T7-纸感笔记.png)
+
+**T8 · Dashboard** — every number is monospaced, which is what makes it read as an instrument
+
+![T8 dashboard](assets/preview/T8-数据仪表盘.png)
+
+**T9 · Magazine** — one accent colour for the whole piece; hierarchy comes from typography, not motion
+
+![T9 magazine](assets/preview/T9-杂志排版.png)
+
+**T10 · Black & gold** — double gold frame, corner marks, and a seal that "stamps" into place
+
+![T10 black and gold](assets/preview/T10-黑金权威.png)
+
+### Full video components (these actually read `timing.json`)
+
+Each of T7–T10 ships **two forms**: a single-page demo (`T7PaperNote.tsx`) and a **full video component** (`T7PaperNoteVideo.tsx`) that resolves the current scene from `timing.json` and drives hard-cut, sentence-level subtitles.
+
+Below: **the same scene (s2) rendered in all four styles** — identical content, four different characters.
+
+| T7 paper note | T8 dashboard |
+|---|---|
+| ![T7 video component](assets/preview/video/T7PaperNoteVideo_s2.png) | ![T8 video component](assets/preview/video/T8DashboardVideo_s2.png) |
+
+| T9 magazine | T10 black & gold |
+|---|---|
+| ![T9 video component](assets/preview/video/T9MagazineVideo_s2.png) | ![T10 video component](assets/preview/video/T10BlackGoldVideo_s2.png) |
+
+Key design: **all animation is driven by the scene-local frame `lf = frame - section.start_frame`**, never by absolute frames — so changing a scene's duration never requires touching the animation.
+
+The four share a scene engine in `templates/code/src/remotion/shared/`:
+
+| File | Role |
+|---|---|
+| `types.ts` | `TimingData` / `Section` / `Sentence`, matching the `timing.json` that `_gen_tts.py` emits |
+| `scene.ts` | `useScene()` — resolves the scene from the current frame, returns normalised progress `p` |
+| `Subtitle.tsx` | Sentence-level subtitle bar, **hard cut** (no fade) so it stays locked to the audio track |
 
 ### Decision tree
 
@@ -211,6 +266,10 @@ flowchart TD
     Q1 -->|"one full problem solution"| T3["T3 Deep dive<br/>240–320s · landscape only"]
     Q1 -->|"paper figures / scans"| T4["T4 Paper walkthrough<br/>220–260s · light theme"]
     Q1 -->|"competition news"| T5["T5 News bulletin<br/>180–200s · 10 layouts"]
+    Q1 -->|"the core is numbers"| T8["T8 Dashboard<br/>120–200s · ring gauges"]
+    Q1 -->|"the core is one claim"| T9["T9 Magazine<br/>150–220s · columns"]
+    Q1 -->|"rules / rubrics / red lines"| T10["T10 Black and gold<br/>120–200s · clauses"]
+    Q1 -->|"like a page of notes"| T7["T7 Paper note<br/>150–240s · highlighter"]
     Q1 -->|"comparisons / rubrics / checklists"| T1["T1 Information density<br/>185–195s · 7 layouts"]
 
     T1 --> T6["T6 Covers and portrait<br/>add-on · applies to all"]
@@ -218,21 +277,31 @@ flowchart TD
     T3 --> T6
     T4 --> T6
     T5 --> T6
+    T7 --> T6
+    T8 --> T6
+    T9 --> T6
+    T10 --> T6
 ```
 
-**One-line mnemonic:** can it be expressed as numbered one-liners? **Yes → T2, no → T1.** Past problem → T3, figure walkthrough → T4, news → T5.
+**One-line mnemonic:** can it be expressed as numbered one-liners? **Yes → T2, no → T1.** Past problem → T3, figure walkthrough → T4, news → T5, numbers → T8, a claim → T9, rules → T10, notes → T7.
 
-### Visual differences at a glance
+### Pick by the feeling you want
 
-| Dimension | T1 | T2 | T3 | T4 | T5 |
-|---|---|---|---|---|---|
-| Background | `#070B18` deep space | same, darker fade-out | same as T1 | `#FDFBF4` cream | same as T1 |
-| Palette | 8 rotating accents | 3 tones (cyan/amber/red) | 8 accents | blue + yellow + teal | 8 accents |
-| Type | serif numerals/titles, sans body | **all sans** | same as T1 | serif titles, sans body | same as T1 |
-| Layouts | 6 + number | **1** | 6 + number | **1** (text left, image right) | **10** |
-| Subtitles | sentence-level / word-boundary | **whole block** | word-boundary | per-line (0.18 s gaps) | word-boundary |
-| Voice | Yunxi | Yunxi | Yunxi | **Yunjian** | Yunxi |
-| Rate | +20% / +28% | +20% / +30% | **+20%** | **+8%** | +20% |
+| Feeling | Choose |
+|---|---|
+| Academic, series flagship, dense | T1 |
+| Urgent, fast to scan, poster-like | T2 |
+| Full retrospective, long form | T3 |
+| Warm, light, image-led | T4 |
+| News, schedule, prizes | T5 |
+| Plain, like a study notebook, annotated | **T7** |
+| Precise, technical, data speaks | **T8** |
+| Editorial, restrained, brand-facing | **T9** |
+| Formal, authoritative, official | **T10** |
+
+The full ten-column difference matrix (background / palette / type / layout count / subtitle mode / voice / rate / gap / motion intensity) lives in [`templates/README.md`](templates/README.md).
+
+One constraint worth remembering: **never mix a light style (T4 / T7 / T9) with a dark one** mid-video. Changing the base colour mid-piece makes it feel like a different video.
 
 ---
 
@@ -381,13 +450,24 @@ mcm-video-pipeline/
 │  ├─ script-and-compliance.md   Script rules and compliance red lines
 │  └─ delivery.md                The 4 delivery document templates
 ├─ templates/
-│  ├─ README.md                  Template selection decision tree
+│  ├─ README.md                  Decision tree + ten-column difference matrix
 │  ├─ T1-深空学术-信息密度.md
 │  ├─ T2-大字清单-紧迫.md
 │  ├─ T3-真题长拆解.md
 │  ├─ T4-奶油论文图解.md
 │  ├─ T5-赛事资讯快报.md
-│  └─ T6-封面与竖版适配.md
+│  ├─ T6-封面与竖版适配.md
+│  ├─ T7-纸感笔记.md              ┐
+│  ├─ T8-数据仪表盘.md            │ newly designed styles
+│  ├─ T9-杂志排版.md              │ render-verified, no full video yet
+│  ├─ T10-黑金权威.md             ┘
+│  └─ code/                       Runnable Remotion components
+│     ├─ README.md
+│     ├─ src/remotion/
+│     │  ├─ shared/               Scene engine (types / scene / Subtitle)
+│     │  ├─ demoData.ts
+│     │  └─ T7PaperNote.tsx + T7PaperNoteVideo.tsx (and T8 / T9 / T10)
+│     └─ videos/demo/timing.json
 ├─ docs/
 │  └─ flowcharts.md              All 8 flowcharts with copyable Mermaid source
 ├─ tools/

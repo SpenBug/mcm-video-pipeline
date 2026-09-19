@@ -1,0 +1,11 @@
+docs: 英文版补 T7-T10 与视频组件，新增换行符检查工具
+
+- README.en.md：补齐十套模板表、四张预览图、视频组件对比图、决策树、仓库结构
+- tools/check-eol.mjs：检查文本文件是否混入 CRLF
+- tools/README.md：新增「事故三：CRLF 让校验静默失配」
+
+修一个自己引入的回归：用 Python 的 write_text 改 README.en.md 时，
+Windows 默认把 528 处换行转成了 CRLF，导致抽 mermaid 代码块的正则失配，
+Mermaid 校验通过数从 19 静默掉到 14（不报错，只是少算了 5 块）。
+
+已全部改回 LF（含 timing.json 的 123 处），并加了 check-eol.mjs 防止再犯。

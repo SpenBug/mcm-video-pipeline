@@ -1,8 +1,8 @@
 # tools · 图表校验
 
-两个脚本，用来在推送前确认 README / docs 里的图**真的能渲染出来**。
+三个脚本，用来在推送前确认 README / docs 里的图**真的能渲染出来**，以及文件没有混入 CRLF。
 
-这个仓库有 19 个 Mermaid 代码块和 3 张手写 SVG，靠肉眼审是审不出问题的。这两个脚本各自覆盖一类事故。
+这个仓库有 19 个 Mermaid 代码块和 3 张手写 SVG，靠肉眼审是审不出问题的。这几个脚本各自覆盖一类事故。
 
 ---
 
@@ -25,16 +25,40 @@ flowchart TD
 手写 SVG 时坐标靠算，容易框住文字、连线穿框、元素跑到画布外。
 不实际光栅化出来看一遍，在 GitHub 上才发现就晚了。
 
+### 事故三：文件被写成 CRLF，校验静默失配
+
+**Python 在 Windows 上用 text 模式写文件会把 `\n` 转成 `\r\n`**：
+
+```python
+# ✗ 会把整个文件变成 CRLF
+pathlib.Path("README.md").write_text(new_text, encoding="utf-8")
+# ✓
+pathlib.Path("README.md").write_text(new_text, encoding="utf-8", newline="\n")
+```
+
+为什么危险：抽 Mermaid 块的正则是 ` ```mermaid\n `，而 CRLF 文件里是 `` ```mermaid\r\n ``，
+`\r` 卡在中间 → **整个文件的图块被静默跳过**，校验器不报错，只是少算了几块。
+
+**症状**：Mermaid 通过数突然下降，且差值正好等于某个文件的图块数。
+
 ---
 
 ## 用法
 
-两个脚本都需要 `mermaid`、`jsdom`、`@resvg/resvg-js` 三个依赖：
+三个脚本都需要 `mermaid`、`jsdom`、`@resvg/resvg-js` 三个依赖：
 
 ```bash
 cd <工作目录>
 npm install mermaid jsdom @resvg/resvg-js
 ```
+
+### 0. 先查换行符（不需要依赖，建议第一个跑）
+
+```bash
+node tools/check-eol.mjs <仓库根目录>
+```
+
+输出 `换行符全部为 LF ✓` 或列出混入 CRLF 的文件及处数。有问题的文件会让第 1 步的校验静默失配。
 
 ### 1. 校验 Mermaid 语法
 
@@ -80,9 +104,9 @@ NODE_PATH=<node_modules路径> node tools/raster-svg.mjs <仓库根目录> <输�
 
 ---
 
-## 两个实现上的坑
+## 实现上的三个坑
 
-### jsdom 的 `navigator` 在 Node 22 上是只读的
+### ① jsdom 的 `navigator` 在 Node 22 上是只读的
 
 ```js
 globalThis.navigator = dom.window.navigator;   // TypeError: Cannot set property navigator
@@ -97,15 +121,20 @@ const define = (k, v) => Object.defineProperty(globalThis, k, {
 define("navigator", dom.window.navigator);
 ```
 
-### 必须在设置完 DOM 全局变量之后再动态 `import` mermaid
+### ② 必须在设置完 DOM 全局变量之后再动态 `import` mermaid
 
 mermaid 是 ESM，且在模块求值阶段就会去摸 DOM。所以要用 `await import("mermaid")` 而不是顶层 `import`，且放在 jsdom 初始化之后。
+
+### ③ Python 写文件的 CRLF 转换
+
+见上文「事故三」。
 
 ---
 
 ## 建议的推送前流程
 
 ```bash
+node tools/check-eol.mjs .               # 换行符全部 LF 才算过
 node tools/validate-mermaid.mjs .        # 19/19 通过才算过
 node tools/raster-svg.mjs . _preview     # 打开 _preview/ 目检一遍
 git add -A && git commit -m "docs: ..."
