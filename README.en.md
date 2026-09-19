@@ -335,7 +335,7 @@ ffmpeg -y -i out/_1.mp4 -c:v libx264 -pix_fmt yuv420p \
 
 ## Known pitfalls
 
-18 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The eight most common:
+20 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The eight most common:
 
 | # | Pitfall | Fix |
 |---|---|---|

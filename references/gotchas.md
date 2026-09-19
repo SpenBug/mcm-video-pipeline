@@ -218,3 +218,64 @@ if abs(actual - expected) > 0.15:
 **症状**：竖版底部大片留白、左右分栏挤成一团、大数字撞边。
 
 **修法**：见 `templates/T6-封面与竖版适配.md`。第十三期新增的 `redline` / `cards` 版式就是靠「正文区改垂直居中」解决的。
+
+---
+
+## 19. `AbsoluteFill` 自带 `width: 100%` / `height: 100%` → 设了 `left` 或 `top` 就溢出画布
+
+**症状**：分栏布局的右栏整个跑到画布外被裁掉；设了 `top` 的面板被推到画布下方看不见。代码里看着完全正常。
+
+**根因**：Remotion 的 `AbsoluteFill` 基础样式是
+
+```js
+{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+  width: "100%", height: "100%", display: "flex", flexDirection: "column", ...style }
+```
+
+`width` / `height` 都是**百分比**，不是 `auto`。所以：
+
+```tsx
+// ✗ 右栏从 x=950 开始，但宽度仍是 1920 → 溢出到 x=2870
+<AbsoluteFill style={{ left: 950, padding: "150px 96px 140px 0" }}>
+
+// ✗ 面板从 y=500 开始，但高度仍是 1080 → 溢出到 y=1580
+<AbsoluteFill style={{ top: 500, padding: "0 84px" }}>
+```
+
+**修法**：**设了 `left` 必须同时给 `width`；设了 `top` 必须同时给 `height`。**
+
+```tsx
+<AbsoluteFill style={{ left: 950, width: 970, padding: "150px 96px 140px 0" }}>
+<AbsoluteFill style={{ top: 500, height: 540, padding: "0 84px" }}>
+```
+
+（`top: 0, height: 150` 这种写法是对的——`top` 和 `height` 同时给了。）
+
+**排查手法**：分栏或分区布局渲染出来「有一块内容不见了 / 被切掉」，第一反应就查这个。
+
+---
+
+## 20. `AbsoluteFill` + `flexDirection: row` + `alignItems: center` → 内容被垂直居中到画布中点
+
+**症状**：页眉 / 顶栏跑到画布垂直正中（y≈540），压在正文上面，看着像层级错乱。
+
+**根因**：`AbsoluteFill` 是全高容器（见第 19 条）。`flexDirection: row` 时交叉轴是垂直方向，`alignItems: center` 于是在**整块画布高度**里居中。
+
+```tsx
+// ✗ 内容会被拉到 y≈540
+<AbsoluteFill style={{ padding: "52px 84px 0", flexDirection: "row", alignItems: "center" }}>
+
+// ✓ 限高之后，center 只在 0~150 内居中
+<AbsoluteFill style={{ top: 0, height: 150, padding: "0 84px", flexDirection: "row", alignItems: "center" }}>
+```
+
+**两种修法，看意图选**：
+
+| 意图 | 写法 |
+|---|---|
+| 想要顶部对齐的顶栏 | `top: 0, height: N` + `alignItems: "center"`（条内垂直居中） |
+| 想在**剩余空间**里垂直居中（如底部面板） | `top: N, height: M` + `alignItems: "center"`（`M` 是剩余高度） |
+
+⚠️ 不要靠「去掉 `alignItems`」来修——那会让子元素 `stretch` 拉伸变形，顶栏里的小图标会被撑开。
+
+**这两条（19 / 20）在 T7–T10 四套新样式的首轮渲染里，4 张图踩了 3 张**。属于 `AbsoluteFill` 的高频陷阱，写新样式时先按这两条自查一遍。
