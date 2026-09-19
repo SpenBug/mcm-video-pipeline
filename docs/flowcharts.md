@@ -150,13 +150,13 @@ flowchart TD
 
     Loop --> TTS["edge-tts 合成<br/>boundary=WordBoundary<br/>流式抓词边界"]
     TTS --> Wav["ffmpeg 转 mono<br/>44100 16bit"]
-    Wav --> Health{"音频体检<br/>RMS<0.20 / peak<0.99<br/>ZCR<6000 / 时长>0.5s"}
+    Wav --> Health{"音频体检<br/>RMS 低于 0.20 · peak 低于 0.99<br/>ZCR 低于 6000 · 时长大于 0.5s"}
     Health -->|"不合格 · 重试 ≤ 6 次"| TTS
     Health -->|"合格"| Rec["记录词边界 + 时长"]
     Rec --> Loop
 
-    Loop -->|"全部完成"| Concat["拼接人声轨<br/>GAP=0 直接字节拼接<br/>GAP>0 ffmpeg concat 插静音"]
-    Concat --> Len{"总长校验<br/>误差 < 0.15s"}
+    Loop -->|"全部完成"| Concat["拼接人声轨<br/>GAP 等于 0 直接字节拼接<br/>GAP 大于 0 用 ffmpeg concat 插静音"]
+    Concat --> Len{"总长校验<br/>误差小于 0.15s"}
     Len -->|"超标"| Fail["raise RuntimeError<br/>时间轴会错位"]
     Len -->|"通过"| Write["回写 timing.json<br/>podcast_audio.srt<br/>phonemes.json"]
     Write --> Mix["混音 BGM volume=0.10<br/>amix duration=first"]
@@ -249,7 +249,7 @@ flowchart TD
 
     Q1 -->|"≤ 10%"| Cut["压稿约 7%<br/>砍重复承接句 / 合并同类清单项"]
     Q1 -->|"10%–20%"| CutThenRate["先压稿 7%<br/>再把 RATE +20% → +28%"]
-    Q1 -->|"> 20%"| Back["回 S4 砍场景<br/>别硬撑"]
+    Q1 -->|"超过 20%"| Back["回 S4 砍场景<br/>别硬撑"]
 
     Cut --> ReRun["重跑 _gen_tts.py"]
     CutThenRate --> ReRun

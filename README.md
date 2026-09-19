@@ -364,8 +364,8 @@ flowchart TD
     Health -->|"合格"| Rec["记录词边界 + 时长"]
     Rec --> Loop
 
-    Loop -->|"全部完成"| Concat["拼接人声轨<br/>GAP=0 直接拼 / GAP>0 ffmpeg concat"]
-    Concat --> Len{"总长校验<br/>误差 < 0.15s"}
+    Loop -->|"全部完成"| Concat["拼接人声轨<br/>GAP 等于 0 直接拼<br/>GAP 大于 0 用 ffmpeg concat"]
+    Concat --> Len{"总长校验<br/>误差小于 0.15s"}
     Len -->|"超标"| Fail["raise<br/>时间轴会错位"]
     Len -->|"通过"| Write["回写 timing.json<br/>podcast_audio.srt<br/>phonemes.json"]
     Write --> Mix["混音 BGM volume=0.10<br/>amix duration=first"]
