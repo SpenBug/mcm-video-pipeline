@@ -1,0 +1,21 @@
+# 依赖与构建产物
+node_modules/
+out/
+dist/
+*.tsbuildinfo
+
+# 视频工程的中间产物
+_tts_tmp/
+_tts_parts/
+*.wav
+*.mp3
+*.mp4
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/

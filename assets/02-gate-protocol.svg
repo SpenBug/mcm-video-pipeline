@@ -1,0 +1,71 @@
+<svg viewBox="0 0 980 700" width="100%" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif">
+<title>确认门协议流程</title>
+<desc>每一步先判断是否只读；写操作必须先出确认卡并等待用户答复，答复后才执行，执行后过本步硬门禁。</desc>
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<rect x="0" y="0" width="980" height="700" rx="16" fill="#FFFFFF"/>
+<text x="40" y="34" font-size="20" font-weight="500" fill="#1A1A2E">确认门协议 · 每一步的准入与门禁</text>
+
+<rect x="180" y="50" width="200" height="44" rx="22" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.8"/>
+<text x="280" y="72" font-size="13.5" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">进入第 N 步</text>
+
+<path d="M280 94 L280 132" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<polygon points="280,136 340,170 280,204 220,170" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
+<text x="280" y="170" font-size="12.5" fill="#633806" text-anchor="middle" dominant-baseline="central">只读操作?</text>
+
+<path d="M340 170 L536 170" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="438" y="158" font-size="11.5" fill="#5F5E5A" text-anchor="middle">是 · 探测 / 抽帧 / 列表</text>
+
+<rect x="540" y="148" width="200" height="44" rx="9" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="640" y="170" font-size="13" fill="#04342C" text-anchor="middle" dominant-baseline="central">直接执行</text>
+
+<path d="M280 204 L280 264" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="294" y="238" font-size="11.5" fill="#5F5E5A">否 · 写文件 / 渲染 / 覆盖产物</text>
+
+<rect x="180" y="268" width="200" height="44" rx="9" fill="#FAECE7" stroke="#D85A30" stroke-width="0.8"/>
+<text x="280" y="290" font-size="13" font-weight="500" fill="#4A1B0C" text-anchor="middle" dominant-baseline="central">输出确认卡</text>
+
+<path d="M280 312 L280 362" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<polygon points="280,366 340,400 280,434 220,400" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
+<text x="280" y="400" font-size="12.5" fill="#633806" text-anchor="middle" dominant-baseline="central">用户答复?</text>
+
+<path d="M340 400 L536 400" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="438" y="388" font-size="11.5" fill="#5F5E5A" text-anchor="middle">未答复</text>
+
+<rect x="540" y="378" width="200" height="44" rx="9" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.8"/>
+<text x="640" y="400" font-size="13" fill="#501313" text-anchor="middle" dominant-baseline="central">停下 · 不动文件</text>
+
+<path d="M280 434 L280 472" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="294" y="456" font-size="11.5" fill="#5F5E5A">已确认</text>
+
+<path d="M740 170 L820 170 L820 465 L286 465" fill="none" stroke="#0F6E56" stroke-width="1.3" stroke-dasharray="6 4"/>
+<path d="M286 465 L286 474" fill="none" stroke="#0F6E56" stroke-width="1.3" marker-end="url(#ar)"/>
+<text x="828" y="318" font-size="11.5" fill="#0F6E56">只读路径</text>
+<text x="828" y="334" font-size="11.5" fill="#0F6E56">直达门禁</text>
+
+<polygon points="280,476 342,510 280,544 218,510" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
+<text x="280" y="510" font-size="12.5" fill="#633806" text-anchor="middle" dominant-baseline="central">硬门禁通过?</text>
+
+<path d="M342 510 L536 510" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="438" y="498" font-size="11.5" fill="#5F5E5A" text-anchor="middle">否</text>
+
+<rect x="540" y="488" width="200" height="44" rx="9" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.8"/>
+<text x="640" y="510" font-size="13" fill="#501313" text-anchor="middle" dominant-baseline="central">回退到上游步骤</text>
+
+<path d="M280 544 L280 604" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="294" y="578" font-size="11.5" fill="#5F5E5A">是</text>
+
+<rect x="170" y="608" width="220" height="44" rx="22" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="280" y="630" font-size="13.5" font-weight="500" fill="#04342C" text-anchor="middle" dominant-baseline="central">进入第 N+1 步</text>
+
+<rect x="540" y="580" width="400" height="72" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.6"/>
+<text x="556" y="604" font-size="11.5" font-weight="500" fill="#2C2C2A">确认卡固定四行</text>
+<text x="556" y="622" font-size="11.5" fill="#5F5E5A">要做什么 / 需要你给 / 我的建议 / 可选分叉</text>
+<text x="556" y="640" font-size="11.5" fill="#5F5E5A">一次只推进一步 · 给默认值 · 点名要动的文件</text>
+</svg>
