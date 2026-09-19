@@ -329,6 +329,19 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | `references/delivery.md` | S13，四份交付文档模板 |
 | `templates/README.md` | S6，模板选用决策树 |
 
+### 流程图（讲给用户看时用）
+
+本技能包**不自带图片**。8 张流程图（总体流程、确认门协议、模板决策树、配音管线、后处理两关、交付汇聚、时长超标回退、风格 DNA 继承）在这个仓库里：
+
+**https://github.com/SpenBug/mcm-video-pipeline**
+
+- `docs/flowcharts.md` — 8 张图 + 可复制的 Mermaid 源码
+- `assets/*.svg` — 3 张独立矢量图，可直接放进 PPT / 视频
+
+**什么时候用**：S1 立项时给用户看总体流程、S4 讲蓝图结构、S6 讲模板选型、S9 超时解释回退路径、以及任何用户问「这条线是怎么跑的」的时候。
+
+如果用户机器上没克隆仓库，直接在对话里用可视化工具重画一张即可——图的语义以本文件和 `references/pipeline.md` 为准。
+
 ---
 
 ## 6. 收尾动作（每次跑完流水线必做）
