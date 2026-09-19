@@ -19,3 +19,6 @@ desktop.ini
 # 编辑器
 .vscode/
 .idea/
+
+# 图表校验的临时输出
+_preview/

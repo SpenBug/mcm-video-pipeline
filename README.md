@@ -542,11 +542,27 @@ mcm-video-pipeline/
 │  └─ T6-封面与竖版适配.md
 ├─ docs/
 │  └─ flowcharts.md               全部流程图 + Mermaid 源码
+├─ tools/
+│  ├─ validate-mermaid.mjs        用官方解析器校验 Mermaid 语法
+│  ├─ raster-svg.mjs              把 SVG 光栅化成 PNG 以便目检
+│  └─ README.md                   为什么要校验、怎么用、实现上的两个坑
 └─ assets/
    ├─ 01-pipeline-overview.svg    总体流程
    ├─ 02-gate-protocol.svg        确认门协议
    └─ 03-template-decision-tree.svg  模板决策树
 ```
+
+### 推送前建议先过一遍图表校验
+
+仓库里有 19 个 Mermaid 块和 3 张手写 SVG。Mermaid 节点标签里的**裸尖括号**（如 `RMS<0.20`、`GAP>0`）会被 GitHub 当成 HTML 标签，**整块图渲染失败**。用 `tools/` 里的脚本先验一遍：
+
+```bash
+npm install mermaid jsdom @resvg/resvg-js
+node tools/validate-mermaid.mjs .        # 19/19 通过才算过
+node tools/raster-svg.mjs . _preview     # 打开 _preview/ 目检一遍
+```
+
+细节见 [`tools/README.md`](tools/README.md)。
 
 ---
 

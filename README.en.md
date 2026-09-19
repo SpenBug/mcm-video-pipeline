@@ -390,11 +390,27 @@ mcm-video-pipeline/
 │  └─ T6-封面与竖版适配.md
 ├─ docs/
 │  └─ flowcharts.md              All 8 flowcharts with copyable Mermaid source
+├─ tools/
+│  ├─ validate-mermaid.mjs       Validate Mermaid syntax with the official parser
+│  ├─ raster-svg.mjs             Rasterize SVGs to PNG for visual inspection
+│  └─ README.md                  Why to check, how to run, two implementation gotchas
 └─ assets/
    ├─ 01-pipeline-overview.svg
    ├─ 02-gate-protocol.svg
    └─ 03-template-decision-tree.svg
 ```
+
+### Run the diagram checks before pushing
+
+The repo carries 19 Mermaid blocks and 3 hand-written SVGs. A **bare angle bracket** inside a Mermaid node label (e.g. `RMS<0.20`, `GAP>0`) is parsed by GitHub as an HTML tag, which **breaks the entire diagram**. Validate with the scripts in `tools/` first:
+
+```bash
+npm install mermaid jsdom @resvg/resvg-js
+node tools/validate-mermaid.mjs .        # must report 19/19
+node tools/raster-svg.mjs . _preview     # open _preview/ and eyeball each one
+```
+
+Details in [`tools/README.md`](tools/README.md).
 
 > Note: `SKILL.md`, `references/` and `templates/` are written in Chinese, because the pipeline targets Chinese-language video production (Chinese TTS voices, Chinese subtitle timing, Chinese platform specs). The READMEs are bilingual so the project can be found and evaluated in English.
 
