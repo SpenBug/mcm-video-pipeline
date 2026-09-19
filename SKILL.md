@@ -321,7 +321,14 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | T9 | `templates/T9-杂志排版.md` | 观点输出 / 方法论 / 系列开篇收尾 | 150–220s | ⚠️ 新设计，未实测 |
 | T10 | `templates/T10-黑金权威.md` | 评审细则 / 处罚条款 / 奖项公布 / 红线 | 120–200s | ⚠️ 新设计，未实测 |
 
-**T7–T10 的组件源码在 `templates/code/`**，可直接拷进 Remotion 工程跑。它们是**单版式演示**（展示一套风格的一个页面长什么样），不是完整视频组件——要用到实际一期，需改造成「读 `timing.json` + 按场景切换」的形态，参考 `EpisodeVideo.tsx`。
+**T7–T10 的组件源码在 `templates/code/`**，每套有**两个形态**：单页演示（`T7PaperNote.tsx`，看风格长什么样）和**完整视频组件**（`T7PaperNoteVideo.tsx`，读 `timing.json` 按帧切场景 + 句级字幕，能直接出片）。
+
+四套共用一个场景引擎 `templates/code/src/remotion/shared/`：
+- `useScene(timing)` 返回 `{ frame, sec, idx, section, p }`，`p` 是场景内归一化进度
+- **动画一律基于场景内局部帧 `lf = frame - section.start_frame`，不用绝对帧**——改场景时长不用改动画
+- `Subtitle` 组件做句级实时刻**硬切**字幕（不加淡入）
+
+换期只改 `demoData.ts` 的场景内容，key 与 `podcast.txt` 的 `[SECTION:name]` 一致；`timing.json` 由 `_gen_tts.py` 生成，不要手改。
 
 **调用方式**：用户说「用 T2」或「走大字清单档」，就 `Read templates/T2-大字清单-紧迫.md` 再执行；也可以说「T1 的配色 + T5 的版式」做混搭，但要先跟用户确认混搭后的时长与场景数。
 

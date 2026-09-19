@@ -313,8 +313,8 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 | **T9** | `templates/T9-杂志排版.md` | 超大衬线标题 + 分栏 + 首字下沉 + 唯一正红 | 高级、克制、像杂志内页 | 150–220s |
 | **T10** | `templates/T10-黑金权威.md` | 近黑底 + 双金框 + 四角标记 + 金印落定 | 庄重、正式、像官方文件 | 120–200s |
 
-> ⚠️ **T7–T10 的诚实状态**：编译通过、静帧渲染目检通过（无溢出、中文正常），但**没跑过完整视频、没实测时长、没适配竖版**。首次使用要预留一轮调试。
-> 组件源码在 `templates/code/`，可直接拷进 Remotion 工程跑。
+> ⚠️ **T7–T10 的诚实状态**：编译通过、静帧渲染目检通过（无溢出、中文正常），**没跑过完整视频、没实测时长、没适配竖版**。首次使用要预留一轮调试。
+> 组件源码在 `templates/code/`，每套都有**单页演示**和**完整视频组件**两个形态。
 
 ### 新样式预览（实拍静帧）
 
@@ -333,6 +333,22 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 **T10 · 黑金权威** — 双层金框 + 四角标记 + 金印「盖章落定」
 
 ![T10 黑金权威](assets/preview/T10-黑金权威.png)
+
+### 完整视频组件（读 timing.json 真能出片）
+
+四套都配了完整视频组件，不是只有静态版式：`useScene()` 按帧定位场景 → 按 `section.name` 取内容 → 句级实时刻硬切字幕。
+
+下面是**同一个场景（s2）在四套风格下的渲染结果**——同一份内容，四种气质：
+
+| T7 纸感笔记 | T8 数据仪表盘 |
+|---|---|
+| ![T7 视频组件](assets/preview/video/T7PaperNoteVideo_s2.png) | ![T8 视频组件](assets/preview/video/T8DashboardVideo_s2.png) |
+
+| T9 杂志排版 | T10 黑金权威 |
+|---|---|
+| ![T9 视频组件](assets/preview/video/T9MagazineVideo_s2.png) | ![T10 视频组件](assets/preview/video/T10BlackGoldVideo_s2.png) |
+
+关键设计：**动画全部基于场景内局部帧 `lf = frame - section.start_frame`**，不用绝对帧——这样改某个场景的时长，动画节奏不用跟着改。
 
 ### 决策树
 
@@ -593,11 +609,17 @@ mcm-video-pipeline/
 │  ├─ T9-杂志排版.md              │ 已渲染验证，未跑完整视频
 │  ├─ T10-黑金权威.md             ┘
 │  └─ code/                       可运行 Remotion 组件源码
-│     ├─ README.md
-│     ├─ T7PaperNote.tsx
-│     ├─ T8Dashboard.tsx
-│     ├─ T9Magazine.tsx
-│     └─ T10BlackGold.tsx
+│     ├─ README.md                怎么跑、怎么换期、修过的 4 个 bug
+│     ├─ src/remotion/
+│     │  ├─ shared/               场景引擎（四套共用）
+│     │  │  ├─ types.ts           TimingData / Section / Sentence
+│     │  │  ├─ scene.ts           useScene() 按帧定位场景
+│     │  │  └─ Subtitle.tsx       句级实时刻硬切字幕条
+│     │  ├─ demoData.ts           演示内容
+│     │  ├─ T7PaperNote.tsx       单页演示
+│     │  ├─ T7PaperNoteVideo.tsx  完整视频组件
+│     │  └─ …（T8 / T9 / T10 同构）
+│     └─ videos/demo/timing.json  演示用时间轴
 ├─ docs/
 │  └─ flowcharts.md               全部流程图 + Mermaid 源码
 ├─ tools/

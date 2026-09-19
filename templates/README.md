@@ -122,12 +122,40 @@
 
 ## 六、`templates/code/` 说明
 
-放 T7–T10 的**可运行 Remotion 组件源码**，每个文件是一个完整的 `React.FC`，直接拷进工程的 `src/remotion/` 并在 `Root.tsx` 注册即可：
+放 T7–T10 的**可运行 Remotion 组件源码**。每套有**两个形态**：
+
+| 形态 | 文件 | 用途 |
+|---|---|---|
+| 单页演示 | `T7PaperNote.tsx` | 看这套风格的一个页面长什么样 |
+| **完整视频组件** | `T7PaperNoteVideo.tsx` | **读 `timing.json`，按帧切场景 + 句级字幕，真能出片** |
+
+外加一个四套共用的**场景引擎** `src/remotion/shared/`：
+
+- `types.ts` — `TimingData` / `Section` / `Sentence`，与 `_gen_tts.py` 产出的结构一一对应
+- `scene.ts` — `useScene()` 按帧定位场景，返回场景内归一化进度 `p`
+- `Subtitle.tsx` — 句级实时刻**硬切**字幕条（不加淡入，与音频轨逐词对齐）
+
+### 关键设计：动画基于场景内局部帧
 
 ```tsx
-<Composition id="T7PaperNote" component={T7PaperNote} durationInFrames={150} fps={30} width={1920} height={1080} />
+const { frame, sec, section, p } = useScene(timingData);
+const lf = frame - section.start_frame;   // ← 所有动画用 lf，不用绝对帧
 ```
 
-⚠️ 这四个组件是**单版式演示**——展示一套风格的一个页面长什么样，不是完整视频组件。要用到实际一期，需要把它们改造成「读 `timing.json` + 按场景切换」的形态，参考 `EpisodeVideo.tsx` 的做法。
+这样改某个场景的时长，动画节奏不用跟着改。这是 `references/pipeline.md` 里「动效三条铁律」第 3 条的落地。
 
-复用前先跑一遍 `references/gotchas.md` 第 19 / 20 条的自查（`AbsoluteFill` 的 `width/height:100%` 陷阱），这两条在 T7–T10 的首轮渲染里让 4 张图踩了 3 张。
+### 演示数据
+
+`videos/demo/timing.json` —— 5 场景 / 32.75s / 982 帧，主题「灵敏度分析三步」，句级时刻齐全。
+换期时把 `demoData.ts` 换成你的场景内容，`timing.json` 由 `_gen_tts.py` 生成（**不要手改**）。
+
+### 验证状态
+
+✅ 8 个 Composition 全部注册 · ✅ T7 逐场景抽 5 帧验证切换正确 · ✅ 四套在 frame 490 同场景对比通过
+⚠️ 未跑 `remotion render` 完整视频 · ⚠️ 未配真实音频 · ❌ 未适配竖版
+
+详细清单和修过的 4 个 bug 见 [`code/README.md`](code/README.md)。
+
+### 复用前必读
+
+`references/gotchas.md` 第 19 / 20 条（`AbsoluteFill` 的 `width/height: 100%` 陷阱）。这两条在 T7–T10 的开发过程中让 **4 张图踩了 3 张**。

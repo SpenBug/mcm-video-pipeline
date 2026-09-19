@@ -1,0 +1,124 @@
+{
+  "total_duration": 32.75,
+  "total_frames": 982,
+  "fps": 30,
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+16%",
+  "sections": [
+    {
+      "name": "hook",
+      "start_sec": 0.0,
+      "duration_sec": 6.31,
+      "start_frame": 0,
+      "duration_frames": 189,
+      "sentences": [
+        {
+          "text": "别只报一个点估计。",
+          "start": 0.0,
+          "end": 1.43
+        },
+        {
+          "text": "评委问的不是你的模型多漂亮，",
+          "start": 1.55,
+          "end": 3.87
+        },
+        {
+          "text": "而是参数动一点，结论会不会翻。",
+          "start": 3.99,
+          "end": 6.31
+        }
+      ]
+    },
+    {
+      "name": "s1",
+      "start_sec": 6.73,
+      "duration_sec": 6.31,
+      "start_frame": 202,
+      "duration_frames": 189,
+      "sentences": [
+        {
+          "text": "先把关键参数挑出来。",
+          "start": 6.73,
+          "end": 8.34
+        },
+        {
+          "text": "不是所有参数都值得扰动，",
+          "start": 8.46,
+          "end": 10.42
+        },
+        {
+          "text": "挑那些量级不确定、来源存疑的。",
+          "start": 10.54,
+          "end": 13.04
+        }
+      ]
+    },
+    {
+      "name": "s2",
+      "start_sec": 13.46,
+      "duration_sec": 5.95,
+      "start_frame": 404,
+      "duration_frames": 178,
+      "sentences": [
+        {
+          "text": "各扰动正负百分之二十，重跑一遍。",
+          "start": 13.46,
+          "end": 15.96
+        },
+        {
+          "text": "看排序变不变，",
+          "start": 16.08,
+          "end": 17.15
+        },
+        {
+          "text": "排序变了，结论就不能进摘要。",
+          "start": 17.27,
+          "end": 19.41
+        }
+      ]
+    },
+    {
+      "name": "s3",
+      "start_sec": 19.83,
+      "duration_sec": 7.38,
+      "start_frame": 595,
+      "duration_frames": 221,
+      "sentences": [
+        {
+          "text": "灵敏度不是换个数字再算一遍。",
+          "start": 19.83,
+          "end": 22.15
+        },
+        {
+          "text": "它是一次压力测试：",
+          "start": 22.27,
+          "end": 23.88
+        },
+        {
+          "text": "如果模型扛不住，说明你对它的信心是假的。",
+          "start": 24.0,
+          "end": 27.21
+        }
+      ]
+    },
+    {
+      "name": "outro",
+      "start_sec": 27.63,
+      "duration_sec": 5.12,
+      "start_frame": 829,
+      "duration_frames": 154,
+      "sentences": [
+        {
+          "text": "这三步走完，你的结论才敢写进摘要。",
+          "start": 27.63,
+          "end": 30.31
+        },
+        {
+          "text": "觉得有用点个收藏，我们下期见。",
+          "start": 30.43,
+          "end": 32.75
+        }
+      ]
+    }
+  ]
+}
