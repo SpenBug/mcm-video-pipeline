@@ -1,6 +1,6 @@
 ---
 name: mcm-video-pipeline
-description: 数模自媒体视频生产线（13 步 + 6 套模板）。覆盖素材准备、事实核对、内容蓝图、口播稿、配音与时间轴、Remotion 渲染、后处理、交付文档全流程，每一步执行前强制向用户确认或索取输入。当用户提到「做视频 / 出片 / 这一期 / 数模国赛视频 / 配音 / 字幕 / Remotion / 封面 / 发布文案 / 横版竖版 / 时长多少」等视频制作事项时使用。
+description: 数模自媒体视频生产线（13 步 + 10 套模板 + 强制确认门）。覆盖素材准备、事实核对、内容蓝图、口播稿、配音与时间轴、Remotion 渲染、后处理、交付文档全流程，每一步执行前强制向用户确认或索取输入。当用户提到「做一期视频 / 出片 / 这一期 / 第 N 期 / 数模国赛视频 / 数模AI冲国奖 / 配音 / 重跑 TTS / 字幕 / Remotion / 封面 / 发布文案 / 横版竖版 / 时长多少 / 用 T2 / 大字清单档 / 纸感笔记 / 数据仪表盘 / 杂志排版 / 黑金权威」等视频制作事项时使用。
 agent_created: true
 ---
 
@@ -8,7 +8,7 @@ agent_created: true
 
 > 工作区：`D:\自媒体\自媒体`
 > 真源：`风格规范\第十二期_封面与视频生成全流程.md`、`风格规范\特别期_大字清单风格_生成流程.md`、`风格规范\template\`
-> 已跑通 10 期以上（第十二期 189.65s / 特别期A 286.37s / 特别期B 319.10s / 第十三期 185.40s / 华为杯 186s / 奶油风真题 242.15s）
+> 已跑通 10 期以上（第十二期 189.65s / 特别期A 286.37s / 特别期B 319.10s / 第十三期 185.40s / 华为杯 186s / 奶油风真题 242.15s / 华为杯模板 280.40s）
 
 ---
 
@@ -182,6 +182,9 @@ agent_created: true
 
 选定后**加载对应的 `templates/T*.md`**，按它的规格执行，不要凭记忆。
 
+**什么时候主动提 T11**：用户说「不想装 node_modules」「想要能双击打开的源码」「交付源码给别人看」「这期想快点出」——
+或内容本身是**并列清单**（N 个坑 / N 条规则）而不是推导链。T11 工程极轻，代价是没有字幕组件、没有自动同步门禁。
+
 ---
 
 ### S7 · 工程初始化
@@ -255,7 +258,7 @@ $env:PYTHONPATH="C:\Users\92182\AppData\Roaming\Python\Python312\site-packages"
 ```powershell
 npx remotion render src\remotion\index.ts <CompositionId> out\横版.mp4 --gl=angle
 npx remotion render src\remotion\index.ts <PortraitId>   out\竖版.mp4 --gl=angle   # 仅在用户要竖版时
-npx remotion still  src\remotion\index.ts Cover43        out\封面16x9.png --gl=angle
+npx remotion still  src\remotion\index.ts Cover43        out\封面4比3.png --gl=angle
 npx remotion still  src\remotion\index.ts Cover34        out\封面3比4.png --gl=angle
 ```
 
@@ -296,7 +299,7 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 └─ 发布文案.md       ← 标题3选1 + 正文 + 章节时间戳 + 标签 + 置顶评论
 ```
 
-再进统一交付包 `数模AI冲国奖_视频交付包\第N期_<主题>\`：横版 mp4 + 封面16x9.png + 封面3比4.png + 发布文案.md。
+再进统一交付包 `数模AI冲国奖_视频交付包\第N期_<主题>\`：横版 mp4 + 封面4比3.png + 封面3比4.png + 发布文案.md（**封面只出 4:3 与 3:4，不出 16:9**）。
 
 四份文档的骨架见 `references/delivery.md`。
 
@@ -313,15 +316,47 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | T1 | `templates/T1-深空学术-信息密度.md` | 方法对比 / 对错辨析 / 评分细则 / 系列正片 | 185–195s | 第十二期 189.65s、第十三期 185.40s |
 | T2 | `templates/T2-大字清单-紧迫.md` | N 条清单 / 考前急救 / 紧迫 CTA | 110–120s | 特别期_开赛前8小时 111.51s |
 | T3 | `templates/T3-真题长拆解.md` | 一道真题四问从头拆到尾 | 240–320s | 特别期A 286.37s、B 319.10s |
-| T4 | `templates/T4-奶油论文图解.md` | 论文截图 / 题目原图逐句讲解，轻量 | 220–260s | `_tools_pipeline` 真题 242.15s |
+| T4 | `templates/T4-奶油论文图解.md` | 论文截图 / 题目原图逐句讲解，轻量 | 220–280s | `_tools_pipeline` 真题 242.15s、华为杯模板 280.40s |
 | T5 | `templates/T5-赛事资讯快报.md` | 赛程 / 报名 / 奖金 / 资格 资讯速报 | 180–200s | 华为杯 186s |
 | T6 | `templates/T6-封面与竖版适配.md` | **叠加档**，给任意一档补封面 / 竖版 | — | 全期通用 |
 | T7 | `templates/T7-纸感笔记.md` | 知识点讲解 / 公式推导 / 复盘笔记，像学习笔记 | 150–240s | ✅ 端到端已验证 |
 | T8 | `templates/T8-数据仪表盘.md` | 结果检验 / 灵敏度 / 性能对比，数字为主 | 120–200s | ✅ 端到端已验证 |
 | T9 | `templates/T9-杂志排版.md` | 观点输出 / 方法论 / 系列开篇收尾 | 150–220s | ✅ 端到端已验证 |
 | T10 | `templates/T10-黑金权威.md` | 评审细则 / 处罚条款 / 奖项公布 / 红线 | 120–200s | ✅ 端到端已验证 |
+| **T11** | `templates/T11-单文件HTML-GSAP.md` | **跨后端**：单文件 HTML + GSAP，工程极轻 | 180–200s | 第七期 185.5s（已交付真源） |
 
-**T7–T10 的组件源码在 `templates/code/`**，每套有**两个形态**：单页演示（`T7PaperNote.tsx`，看风格长什么样）和**完整视频组件**（`T7PaperNoteVideo.tsx`，读 `timing.json` 按帧切场景 + 句级字幕，能直接出片）。
+### ⚠️ T11 是唯一不走 Remotion 的档
+
+T1–T10 全部基于 Remotion（`src/remotion/*.tsx` + `timing.json` + 帧驱动）。
+**T11 走单文件 HTML + GSAP 绝对秒时间轴 + HyperFrames 渲染**，两者工程形态、时间轴模型、配音管线全不一样：
+
+| | T1–T10 | T11 |
+|---|---|---|
+| 工程 | `src/remotion/` + `node_modules` | 单个 `index.html`，零依赖 |
+| 时间轴 | `timing.json` 帧驱动 | GSAP 绝对秒，秒数手填 |
+| 口播稿 | `podcast.txt`（`[SECTION:name]`） | `scripts/sN.txt`（一场景一文件） |
+| 配音 | edge-tts 云希/云健 | Kokoro ONNX 离线（云健） |
+| 渲染 | `npx remotion render` | `npx hyperframes render` |
+
+**选 T11 后，S7–S12 按下面的变体走**（骨架与实例化步骤见 `templates/code/html-gsap/README.md`）：
+
+| 步 | Remotion 线 | T11 变体 |
+|---|---|---|
+| S7 工程初始化 | 复制骨架 + `npm install` | 复制 `templates/code/html-gsap/` + 拷 `model.onnx`/字体/bgm，**无依赖安装** |
+| S8 内容配置 | 改 `episode_data.ts` | 改 `index.html` 的 DOM + CSS + GSAP 段；写 `scripts/sN.txt` |
+| S9 配音 | `_gen_tts.py`（edge-tts） | `python tts_models/gen_tts_html.py . zm_yunjian 1.08`（**分段合成，见 T11 文档 7.1**） |
+| S9 门禁 | 三条（时长/体检/拼接） | 回填实测时长到 `index.html` 音频块 + `TIMELINE.md`，**两处必须一致** |
+| S10 目检 | studio + `remotion still` | `npx hyperframes lint` → `check` → `preview` |
+| S11 渲染 | `npx remotion render` | `npx hyperframes render --quality high` |
+| S12 后处理 | 两关（loudnorm + bt709） | **同样两关，不能省** —— 真源没记录，接入时必须补做并回填实测值 |
+| S13 交付 | 4 份文档 | `TIMELINE.md` 替代「时间线核对表」；发布文案要补**章节时间戳 + 置顶评论** |
+
+⚠️ **T11 骨架的三个已知缺口**（首次使用时必须补，详见 T11 文档第 9 节）：
+1. 真源**未过 HyperFrames lint**（`repeat: -1` + 正文 `<br>`），骨架已改，但骨架本身**没跑过完整渲染**。
+2. **没有数据同步门禁** —— 段数 = 场景数 = 音频数 = GSAP 段数，四处必须相等，写个 5 行脚本核。
+3. 后处理两关在真源里**没有记录**。
+
+**T4 / T7–T10 的组件源码在 `templates/code/`**。T7–T10 每套有**两个形态**：单页演示（`T7PaperNote.tsx`，看风格长什么样）和**完整视频组件**（`T7PaperNoteVideo.tsx`，读 `timing.json` 按帧切场景 + 句级字幕，能直接出片）。**T4 只有完整视频组件**：`T4CreamPaperVideo.tsx` + `T4plan.example.ts`（复制成 `plan.ts` 用）+ 两个附属版式 `T4RepoTree.tsx`（文件树）/ `T4YearTable.tsx`（对比表）—— 原 `_tools_pipeline/EpisodeScene.tsx` 是单页版，且依赖 `./cues` 和 `./displayPlan` 两个在该目录里并不存在的文件。
 
 四套共用一个场景引擎 `templates/code/src/remotion/shared/`：
 - `useScene(timing)` 返回 `{ frame, sec, idx, section, p }`，`p` 是场景内归一化进度
@@ -345,6 +380,7 @@ ffmpeg -y -i out\_1.mp4 -c:v libx264 -pix_fmt yuv420p -x264-params colorprim=bt7
 | `references/script-and-compliance.md` | S3 / S5，口播稿规则与合规红线 |
 | `references/delivery.md` | S13，四份交付文档模板 |
 | `templates/README.md` | S6，模板选用决策树 |
+| `templates/T11-单文件HTML-GSAP.md` + `templates/code/html-gsap/README.md` | 选了 T11（HTML+GSAP 后端）时，S7–S13 全流程改走这套 |
 
 ### 流程图（讲给用户看时用）
 
