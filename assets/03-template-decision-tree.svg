@@ -1,14 +1,14 @@
-<svg viewBox="0 0 980 620" width="100%" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif">
-<title>模板选型决策树</title>
-<desc>先判断内容能否用编号加一句话表达，能则用 T2，不能则按主体类型选 T1、T3、T4、T5，最后都叠加 T6 封面与竖版适配。</desc>
+<svg viewBox="0 0 980 794" width="100%" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif">
+<title>模板选型决策树 · 11 套模板</title>
+<desc>先判断内容能否用编号加一句话表达，能则用 T2 大字清单档；不能则按主体类型分到 T1、T3、T4、T5、T7、T8、T9、T10、T11 九档，其中 T11 是唯一的跨后端档，走单文件 HTML 加 GSAP。所有档最后都要过一遍 T6 封面与竖版适配。</desc>
 <defs>
 <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
 <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
 </marker>
 </defs>
 
-<rect x="0" y="0" width="980" height="620" rx="16" fill="#FFFFFF"/>
-<text x="40" y="34" font-size="20" font-weight="500" fill="#1A1A2E">模板选型决策树 · 6 套模板</text>
+<rect x="0" y="0" width="980" height="794" rx="16" fill="#FFFFFF"/>
+<text x="40" y="34" font-size="20" font-weight="500" fill="#1A1A2E">模板选型决策树 · 11 套模板</text>
 
 <polygon points="490,54 670,96 490,138 310,96" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
 <text x="490" y="88" font-size="12.5" fill="#633806" text-anchor="middle" dominant-baseline="central">内容能不能用</text>
@@ -27,44 +27,62 @@
 <polygon points="490,180 610,220 490,260 370,220" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
 <text x="490" y="220" font-size="12.5" fill="#633806" text-anchor="middle" dominant-baseline="central">主体是什么?</text>
 
-<text x="205" y="336" font-size="11" fill="#888780" text-anchor="middle">方法对比 / 评分细则</text>
-<text x="415" y="336" font-size="11" fill="#888780" text-anchor="middle">一道真题</text>
-<text x="625" y="336" font-size="11" fill="#888780" text-anchor="middle">论文图讲解</text>
-<text x="835" y="336" font-size="11" fill="#888780" text-anchor="middle">赛事资讯</text>
+<path d="M490 260 L490 276 L45 276 L45 600" fill="none" stroke="#888780" stroke-width="1.5"/>
+<path d="M490 276 L525 276 L525 532" fill="none" stroke="#888780" stroke-width="1.5"/>
+<path d="M45 328 L57 328" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M45 396 L57 396" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M45 464 L57 464" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M45 532 L57 532" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M45 600 L57 600" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M525 328 L537 328" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M525 396 L537 396" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M525 464 L537 464" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<path d="M525 532 L537 532" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
 
-<path d="M490 260 L205 346" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
-<path d="M490 260 L415 346" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
-<path d="M490 260 L625 346" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
-<path d="M490 260 L835 346" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#ar)"/>
+<rect x="60" y="300" width="380" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
+<text x="80" y="322" font-size="12.5" font-weight="500" fill="#042C53" dominant-baseline="central">T3 真题长拆解档</text>
+<text x="80" y="341" font-size="11" fill="#185FA5" dominant-baseline="central">一道真题四问从头拆到尾 · 240–320s</text>
 
-<rect x="115" y="350" width="180" height="64" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
-<text x="205" y="374" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">T1 信息密度档</text>
-<text x="205" y="394" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">185–195s · 7 版式</text>
+<rect x="60" y="368" width="380" height="56" rx="10" fill="#FAECE7" stroke="#993C1D" stroke-width="0.9"/>
+<text x="80" y="390" font-size="12.5" font-weight="500" fill="#4A1B0C" dominant-baseline="central">T4 奶油论文图解档</text>
+<text x="80" y="409" font-size="11" fill="#993C1D" dominant-baseline="central">论文截图 / 题目原图逐句讲 · 220–260s</text>
 
-<rect x="325" y="350" width="180" height="64" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
-<text x="415" y="374" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">T3 真题长拆解档</text>
-<text x="415" y="394" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">240–320s · 只出横版</text>
+<rect x="60" y="436" width="380" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
+<text x="80" y="458" font-size="12.5" font-weight="500" fill="#042C53" dominant-baseline="central">T1 深空学术信息密度档</text>
+<text x="80" y="477" font-size="11" fill="#185FA5" dominant-baseline="central">方法对比 / 对错辨析 / 评分细则 · 185–195s</text>
 
-<rect x="535" y="350" width="180" height="64" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="0.9"/>
-<text x="625" y="374" font-size="13" font-weight="500" fill="#4A1B0C" text-anchor="middle" dominant-baseline="central">T4 奶油论文图解档</text>
-<text x="625" y="394" font-size="11" fill="#993C1D" text-anchor="middle" dominant-baseline="central">220–260s · 浅色</text>
+<rect x="60" y="504" width="380" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
+<text x="80" y="526" font-size="12.5" font-weight="500" fill="#042C53" dominant-baseline="central">T5 赛事资讯快报档</text>
+<text x="80" y="545" font-size="11" fill="#185FA5" dominant-baseline="central">赛程 / 报名 / 奖金 / 资格 · 180–200s</text>
 
-<rect x="745" y="350" width="180" height="64" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.9"/>
-<text x="835" y="374" font-size="13" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">T5 资讯快报档</text>
-<text x="835" y="394" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">180–200s · 10 版式</text>
+<rect x="60" y="572" width="380" height="56" rx="10" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.9"/>
+<text x="80" y="594" font-size="12.5" font-weight="500" fill="#173404" dominant-baseline="central">T8 数据仪表盘档</text>
+<text x="80" y="613" font-size="11" fill="#3B6D11" dominant-baseline="central">结果检验 / 灵敏度 / 性能对比 · 120–200s</text>
 
-<path d="M75 248 L75 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M205 414 L205 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M415 414 L415 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M625 414 L625 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M835 414 L835 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M75 465 L835 465" fill="none" stroke="#888780" stroke-width="1.3"/>
-<path d="M490 465 L490 472" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<rect x="540" y="300" width="380" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.9"/>
+<text x="560" y="322" font-size="12.5" font-weight="500" fill="#26215C" dominant-baseline="central">T9 杂志排版档</text>
+<text x="560" y="341" font-size="11" fill="#534AB7" dominant-baseline="central">观点输出 / 方法论 / 系列开篇收尾 · 150–220s</text>
 
-<rect x="320" y="476" width="340" height="58" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.9"/>
-<text x="490" y="496" font-size="13" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">T6 封面与竖版适配（叠加档）</text>
-<text x="490" y="516" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">任意一档都要过一遍封面规格 + 竖版 8 项清单</text>
+<rect x="540" y="368" width="380" height="56" rx="10" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.9"/>
+<text x="560" y="390" font-size="12.5" font-weight="500" fill="#501313" dominant-baseline="central">T10 黑金权威档</text>
+<text x="560" y="409" font-size="11" fill="#A32D2D" dominant-baseline="central">评审细则 / 处罚条款 / 红线 · 120–200s</text>
 
-<text x="490" y="570" font-size="12" fill="#5F5E5A" text-anchor="middle">时长反向选档：&lt; 2 分钟 → T2　｜　2–3 分钟 → T5 或 T1 压到 185s　｜　3–4 分钟 → T4　｜　4–6 分钟 → T3</text>
-<text x="490" y="596" font-size="12" fill="#888780" text-anchor="middle">一句话记忆：能用「编号 + 一句话」表达 → T2；不能 → T1。真题 → T3，图讲解 → T4，资讯 → T5。</text>
+<rect x="540" y="436" width="380" height="56" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.9"/>
+<text x="560" y="458" font-size="12.5" font-weight="500" fill="#412402" dominant-baseline="central">T7 纸感笔记档</text>
+<text x="560" y="477" font-size="11" fill="#854F0B" dominant-baseline="central">知识点讲解 / 公式推导 / 复盘笔记 · 150–240s</text>
+
+<rect x="540" y="504" width="380" height="56" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="1.4"/>
+<text x="560" y="526" font-size="12.5" font-weight="500" fill="#04342C" dominant-baseline="central">T11 单文件 HTML 档（跨后端）</text>
+<text x="560" y="545" font-size="11" fill="#085041" dominant-baseline="central">要工程极轻 / 交付可双击打开的源码 · 180–200s</text>
+
+<path d="M45 636 L920 636" fill="none" stroke="#B4B2A9" stroke-width="1.2" stroke-dasharray="5 4"/>
+<path d="M490 636 L490 646" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="920" y="628" font-size="11" fill="#888780" text-anchor="end">上面每一档都要过一遍</text>
+
+<rect x="140" y="648" width="700" height="56" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.9"/>
+<text x="490" y="670" font-size="13" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">T6 封面与竖版适配（叠加档）</text>
+<text x="490" y="690" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">封面只出 4:3 与 3:4 两种 · 竖版 8 项清单</text>
+
+<text x="40" y="740" font-size="11.5" fill="#5F5E5A">时长反向选档：低于 2 分钟 → T2　｜　2–3 分钟 → T5 / T7 / T8 / T9 / T10 / T11　｜　3–4 分钟 → T4　｜　4–6 分钟 → T3</text>
+<text x="40" y="764" font-size="11.5" fill="#5F5E5A">一句话记忆：能用「编号 + 一句话」表达 → T2；不能 → T1。真题 → T3，图讲解 → T4，资讯 → T5，数字 → T8，主张 → T9，规定 → T10，笔记 → T7，要轻 → T11。</text>
 </svg>

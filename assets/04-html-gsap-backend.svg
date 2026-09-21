@@ -1,0 +1,46 @@
+<svg viewBox="0 0 980 486" width="100%" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif">
+<title>两套渲染后端对照 · Remotion 与单文件 HTML + GSAP</title>
+<desc>左侧是 T1 到 T10 的 Remotion 后端：tsx 组件、timing.json 帧驱动、podcast.txt 分块稿、node_modules。右侧是 T11 的单文件 HTML 后端：一个 index.html、scripts 一场景一文件、分段 wav 音频、Kokoro 离线模型。两条线最终都汇到渲染与后处理两关，产出同一个规格的成品 mp4。</desc>
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<rect x="0" y="0" width="980" height="486" rx="16" fill="#FFFFFF"/>
+<text x="40" y="34" font-size="20" font-weight="500" fill="#1A1A2E">两套渲染后端对照 · Remotion 与 HTML + GSAP</text>
+
+<rect x="40" y="56" width="430" height="302" rx="16" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.9"/>
+<text x="64" y="82" font-size="15" font-weight="500" fill="#2C2C2A">T1–T10 · Remotion 后端</text>
+<text x="64" y="102" font-size="11.5" fill="#5F5E5A">工程重，要装 node_modules</text>
+
+<rect x="64" y="114" width="382" height="48" rx="10" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.8"/>
+<text x="255" y="138" font-size="13" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">src/remotion/*.tsx</text>
+<rect x="64" y="172" width="382" height="48" rx="10" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.8"/>
+<text x="255" y="196" font-size="13" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">timing.json（帧驱动）</text>
+<rect x="64" y="230" width="382" height="48" rx="10" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.8"/>
+<text x="255" y="254" font-size="13" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">podcast.txt [SECTION:name]</text>
+<rect x="64" y="288" width="382" height="48" rx="10" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.8"/>
+<text x="255" y="312" font-size="13" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">node_modules + npm install</text>
+
+<rect x="510" y="56" width="430" height="302" rx="16" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.9"/>
+<text x="534" y="82" font-size="15" font-weight="500" fill="#04342C">T11 · 单文件 HTML + GSAP</text>
+<text x="534" y="102" font-size="11.5" fill="#0F6E56">零依赖，双击就能打开</text>
+
+<rect x="534" y="114" width="382" height="48" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="725" y="138" font-size="13" fill="#04342C" text-anchor="middle" dominant-baseline="central">index.html（单文件）</text>
+<rect x="534" y="172" width="382" height="48" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="725" y="196" font-size="13" fill="#04342C" text-anchor="middle" dominant-baseline="central">scripts/sN.txt（一场景一文件）</text>
+<rect x="534" y="230" width="382" height="48" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="725" y="254" font-size="13" fill="#04342C" text-anchor="middle" dominant-baseline="central">audio/sN.wav + bgm.mp3</text>
+<rect x="534" y="288" width="382" height="48" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+<text x="725" y="312" font-size="13" fill="#04342C" text-anchor="middle" dominant-baseline="central">tts_models/（Kokoro 离线）</text>
+
+<path d="M255 358 L255 384 L490 384 L490 396" fill="none" stroke="#888780" stroke-width="1.5"/>
+<path d="M725 358 L725 384 L490 384" fill="none" stroke="#888780" stroke-width="1.5"/>
+<path d="M490 384 L490 396" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<rect x="40" y="398" width="900" height="64" rx="12" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.9"/>
+<text x="490" y="422" font-size="15" font-weight="500" fill="#2C2C2A" text-anchor="middle" dominant-baseline="central">渲染 + 后处理两关（loudnorm → bt709）→ 成品 mp4</text>
+<text x="490" y="444" font-size="12" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">npx remotion render   /   npx hyperframes render</text>
+</svg>

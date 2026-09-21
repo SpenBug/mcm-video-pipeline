@@ -1,6 +1,6 @@
 # templates/code · 可运行样式组件
 
-T7–T10 四套样式的 **Remotion 组件源码**。每套都有两个形态：**单页演示**（看风格长什么样）和 **完整视频组件**（读 `timing.json` 真能出片）。
+T7–T10 五套样式的 **Remotion 组件源码**。每套都有两个形态：**单页演示**（看风格长什么样）和 **完整视频组件**（读 `timing.json` 真能出片）。
 
 ---
 
@@ -14,6 +14,10 @@ templates/code/
 │  │  ├─ scene.ts                  useScene() 按帧定位场景 + pickSentence()
 │  │  └─ Subtitle.tsx              句级实时刻硬切字幕条
 │  ├─ demoData.ts                  演示内容（对应 5 个场景）
+│  ├─ T4CreamPaperVideo.tsx        ★ T4 完整视频组件（奶油论文图解）
+│  ├─ T4RepoTree.tsx               ★ T4 附属版式：文件树（mode: "tree"）
+│  ├─ T4YearTable.tsx              ★ T4 附属版式：对比表（mode: "year"）
+│  ├─ T4plan.example.ts            ★ T4 场景计划示例（复制成 plan.ts 再用）
 │  ├─ T7PaperNote.tsx              单页演示
 │  ├─ T7PaperNoteVideo.tsx         完整视频组件
 │  ├─ T8Dashboard.tsx / T8DashboardVideo.tsx
@@ -22,6 +26,35 @@ templates/code/
 │  └─ Root.example.tsx             8 个 Composition 的注册示例
 └─ videos/demo/timing.json         演示用时间轴（5 场景 / 32.75s / 982 帧）
 ```
+
+---
+
+## T4 组件怎么用（2026-09-21 实测跑通，280.40s 出片）
+
+T4 不依赖 `shared/scene.ts`，自己从 `timing.json` 定位场景与句子。换期只改两处：
+
+1. `T4CreamPaperVideo.tsx` 顶部 `import timingData from "../../videos/<你的期>/timing.json"`
+2. 把 `T4plan.example.ts` 复制成 `plan.ts`，改里面的 `SECTION_PLAN`，并同步改组件里的 import
+
+`SECTION_PLAN` 的 key **必须与 `podcast.txt` 的 `[SECTION:name]` 完全一致**（用 `_check_sync.py` 校验）。每个场景配：
+
+```ts
+{ label: "第 6–8 页", chapter: "三线表", note: "tabularx 自动列宽", imgs: ["page-06.png"], hue: "#F59E0B", mode: "split" }
+```
+
+`mode` 四选一：
+
+| mode | 版式 | 用图 |
+|---|---|---|
+| `open` | 整屏大图（开场 / 收尾） | 单张 |
+| `split` | 左文右图（最常用） | 按句索引轮换 |
+| `tree` | 文件树列表（`T4RepoTree`） | 不用图 |
+| `year` | 左右对比表（`T4YearTable`） | 不用图 |
+
+**两个已踩的版式坑**：
+
+- 顶部标签容器**不要**用 `AbsoluteFill + height`，会让 `justify-content: space-between` 失效 → 用 `position: absolute; top/left/right: 0` + `boxSizing: "border-box"`。
+- 右侧 A4 竖版页图必须给 `img` 加**明确像素** `maxHeight`（如 690），`maxHeight: "100%"` 在 flex 链里常失效，图会撑出内容区被字幕遮住。
 
 ---
 

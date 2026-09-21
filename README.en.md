@@ -1,6 +1,6 @@
 # mcm-video-pipeline
 
-> A production pipeline for math-modeling (MCM/CUMCM) explainer videos — 13 gated steps, 10 reusable templates, and a mandatory confirmation gate before every step.
+> A production pipeline for math-modeling (MCM/CUMCM) explainer videos — 13 gated steps, 11 reusable templates, and a mandatory confirmation gate before every step.
 
 **English** | [中文](README.md)
 
@@ -23,6 +23,7 @@ Every number in here is a **measured value** taken from shipped videos (episodes
 - [Known pitfalls](#known-pitfalls)
 - [Repository layout](#repository-layout)
 - [Quick start](#quick-start)
+- [Changelog](CHANGELOG.md)
 
 ---
 
@@ -187,7 +188,7 @@ Measured: episode 12 was 221 s against a 190 s target → trimmed ~7% + raised r
 
 ## Template library
 
-Ten templates. T1–T5 have **shipped source projects** behind them (measured values); T7–T10 are **newly designed styles**, render-verified but never run as a full video.
+Eleven templates. Seven have **shipped source projects** behind them (measured values); T7–T10 are **newly designed styles**, render-verified but never run as a full video.
 
 ### With shipped sources (measured values)
 
@@ -199,6 +200,18 @@ Ten templates. T1–T5 have **shipped source projects** behind them (measured va
 | **T4** | `templates/T4-奶油论文图解.md` | Paper figures / problem scans explained line by line; light theme | 220–260 s | 6 chapters / 30 lines | 242.15 s |
 | **T5** | `templates/T5-赛事资讯快报.md` | Competition news: schedule, registration, prizes, eligibility | 180–200 s | 10 | 186 s |
 | **T6** | `templates/T6-封面与竖版适配.md` | **Add-on**: covers and portrait adaptation for any other template | — | — | All episodes |
+| **T11** | `templates/T11-单文件HTML-GSAP.md` | **Different backend**: single-file HTML + GSAP, zero dependencies | 180–200 s | 11 | Ep.7 185.5 s / 5565 frames |
+
+### ★ T11 is the only template that does not use Remotion
+
+T1–T10 are all Remotion projects (`src/remotion/*.tsx` + frame-driven `timing.json`).
+T11 is a **single `index.html` driven by a GSAP timeline in absolute seconds**, rendered by HyperFrames.
+Engineering shape, timeline model, and voiceover pipeline are all different.
+
+![Two rendering backends compared](assets/04-html-gsap-backend.svg)
+
+The scaffold lives in `templates/code/html-gsap/` (9 zero-dependency files, with a 7-step instantiation README).
+Full comparison: [`docs/flowcharts.md` figure 9](docs/flowcharts.md#9-两套渲染后端对照).
 
 ### Newly designed styles (render-verified, not yet run as full videos)
 
@@ -211,6 +224,7 @@ Ten templates. T1–T5 have **shipped source projects** behind them (measured va
 
 > ✅ **Status of T7–T10**: all four have been **given real TTS audio, fully rendered, and run through both post-processing passes**. Every master meets `yuv420p(tv, bt709)`.
 > ⚠️ Still missing: portrait adaptation, cover designs, and a long-form (185 s+) stress test.
+> T11 is a different case — it has a **shipped source project** (Ep.7, 185.5 s) and **both 4:3 and 3:4 covers**, but its scaffold **has not yet been through a full render**.
 
 ### Style previews (real still frames)
 
@@ -288,6 +302,7 @@ flowchart TD
     Q1 -->|"the core is one claim"| T9["T9 Magazine<br/>150–220s · columns"]
     Q1 -->|"rules / rubrics / red lines"| T10["T10 Black and gold<br/>120–200s · clauses"]
     Q1 -->|"like a page of notes"| T7["T7 Paper note<br/>150–240s · highlighter"]
+    Q1 -->|"must be ultra-light to build /<br/>source you can double-click open"| T11["T11 Single-file HTML<br/>180–200s · different backend"]
     Q1 -->|"comparisons / rubrics / checklists"| T1["T1 Information density<br/>185–195s · 7 layouts"]
 
     T1 --> T6["T6 Covers and portrait<br/>add-on · applies to all"]
@@ -299,9 +314,10 @@ flowchart TD
     T8 --> T6
     T9 --> T6
     T10 --> T6
+    T11 --> T6
 ```
 
-**One-line mnemonic:** can it be expressed as numbered one-liners? **Yes → T2, no → T1.** Past problem → T3, figure walkthrough → T4, news → T5, numbers → T8, a claim → T9, rules → T10, notes → T7.
+**One-line mnemonic:** can it be expressed as numbered one-liners? **Yes → T2, no → T1.** Past problem → T3, figure walkthrough → T4, news → T5, numbers → T8, a claim → T9, rules → T10, notes → T7, **need it light → T11**.
 
 ### Pick by the feeling you want
 
@@ -316,8 +332,9 @@ flowchart TD
 | Precise, technical, data speaks | **T8** |
 | Editorial, restrained, brand-facing | **T9** |
 | Formal, authoritative, official | **T10** |
+| **Ultra-light build, source you can double-click open, list-shaped content** | **T11** |
 
-The full ten-column difference matrix (background / palette / type / layout count / subtitle mode / voice / rate / gap / motion intensity) lives in [`templates/README.md`](templates/README.md).
+The full eleven-column difference matrix (background / palette / type / layout count / subtitle mode / voice / rate / gap / motion intensity / backend) lives in [`templates/README.md`](templates/README.md).
 
 One constraint worth remembering: **never mix a light style (T4 / T7 / T9) with a dark one** mid-video. Changing the base colour mid-piece makes it feel like a different video.
 
@@ -422,7 +439,7 @@ ffmpeg -y -i out/_1.mp4 -c:v libx264 -pix_fmt yuv420p \
 
 ## Known pitfalls
 
-21 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The eight most common:
+27 documented pitfalls live in [`references/gotchas.md`](references/gotchas.md). The nine most common:
 
 | # | Pitfall | Fix |
 |---|---|---|
@@ -434,6 +451,7 @@ ffmpeg -y -i out/_1.mp4 -c:v libx264 -pix_fmt yuv420p \
 | 6 | Wrong cover dimensions | Trust the artifacts: 1200×900 / 1080×1440 |
 | 7 | `podcast.txt` looks garbled | Console encoding issue; the file is fine as UTF-8 |
 | 8 | Rule text stated more strongly than the official wording | Always check against the source first |
+| 9 | **Kokoro reads Chinese as one unbroken run** | Its tokenizer ignores full-width punctuation → synthesize per clause and insert controlled pauses (entry 26) |
 
 ### Environment prerequisites (measured on Windows)
 
@@ -464,11 +482,11 @@ mcm-video-pipeline/
 ├─ SKILL.md                      Agent entry point: 13 steps + gate protocol
 ├─ references/
 │  ├─ pipeline.md                Full technical spec, parameter table, animation grammar
-│  ├─ gotchas.md                 Environment prerequisites + 18 measured pitfalls
+│  ├─ gotchas.md                 Environment prerequisites + 27 measured pitfalls
 │  ├─ script-and-compliance.md   Script rules and compliance red lines
 │  └─ delivery.md                The 4 delivery document templates
 ├─ templates/
-│  ├─ README.md                  Decision tree + ten-column difference matrix
+│  ├─ README.md                  Decision tree + eleven-column difference matrix
 │  ├─ T1-深空学术-信息密度.md
 │  ├─ T2-大字清单-紧迫.md
 │  ├─ T3-真题长拆解.md
@@ -479,34 +497,47 @@ mcm-video-pipeline/
 │  ├─ T8-数据仪表盘.md            │ newly designed styles
 │  ├─ T9-杂志排版.md              │ render-verified, no full video yet
 │  ├─ T10-黑金权威.md             ┘
-│  └─ code/                       Runnable Remotion components
+│  ├─ T11-单文件HTML-GSAP.md      ★ different backend: HTML + GSAP, zero deps
+│  └─ code/                       Runnable source
 │     ├─ README.md
 │     ├─ src/remotion/
 │     │  ├─ shared/               Scene engine (types / scene / Subtitle)
 │     │  ├─ demoData.ts
+│     │  ├─ T4CreamPaperVideo.tsx + T4RepoTree.tsx + T4YearTable.tsx + T4plan.example.ts
 │     │  └─ T7PaperNote.tsx + T7PaperNoteVideo.tsx (and T8 / T9 / T10)
+│     ├─ html-gsap/               ★ T11 zero-dependency scaffold (9 files)
+│     │  ├─ README.md             7-step instantiation + naming + comment conventions
+│     │  ├─ index.html            Main composition skeleton
+│     │  ├─ tts_models/           Segmented synthesis script + edge-tts fallback
+│     │  ├─ scripts/s1.txt        Voiceover segment template
+│     │  ├─ cover43.html / cover34.html
+│     │  ├─ voice_demo.html       Voice audition page
+│     │  ├─ TIMELINE.md           Timeline verification table template
+│     │  └─ 发布文案.md
 │     └─ videos/demo/timing.json
 ├─ docs/
-│  └─ flowcharts.md              All 8 flowcharts with copyable Mermaid source
+│  └─ flowcharts.md              All 9 flowcharts with copyable Mermaid source
 ├─ tools/
 │  ├─ validate-mermaid.mjs       Validate Mermaid syntax with the official parser
 │  ├─ raster-svg.mjs             Rasterize SVGs to PNG for visual inspection
+│  ├─ check-eol.mjs              Check text files for stray CRLF line endings
 │  └─ README.md                  Why to check, how to run, two implementation gotchas
 └─ assets/
    ├─ 01-pipeline-overview.svg
    ├─ 02-gate-protocol.svg
    ├─ 03-template-decision-tree.svg
+   ├─ 04-html-gsap-backend.svg   ★ the two rendering backends compared
    ├─ preview/                    Real still frames, plus video-component frames
    └─ sample/                     End-to-end sample (T7 paper note, 36 s)
 ```
 
 ### Run the diagram checks before pushing
 
-The repo carries 19 Mermaid blocks and 3 hand-written SVGs. A **bare angle bracket** inside a Mermaid node label (e.g. `RMS<0.20`, `GAP>0`) is parsed by GitHub as an HTML tag, which **breaks the entire diagram**. Validate with the scripts in `tools/` first:
+The repo carries 20 Mermaid blocks and 4 hand-written SVGs. A **bare angle bracket** inside a Mermaid node label (e.g. `RMS<0.20`, `GAP>0`) is parsed by GitHub as an HTML tag, which **breaks the entire diagram**. Validate with the scripts in `tools/` first:
 
 ```bash
 npm install mermaid jsdom @resvg/resvg-js
-node tools/validate-mermaid.mjs .        # must report 19/19
+node tools/validate-mermaid.mjs .        # must report 20/20
 node tools/raster-svg.mjs . _preview     # open _preview/ and eyeball each one
 ```
 

@@ -7,12 +7,16 @@
 |---|---|---|---|
 | 1 | [总体流程](#1-总体流程) | 一眼看清 13 步与阶段划分 | S1–S13 |
 | 2 | [确认门协议](#2-确认门协议) | 每一步的准入与门禁逻辑 | 全流程 |
-| 3 | [模板选型决策树](#3-模板选型决策树) | 选哪一档模板 | S6 |
+| 3 | [模板选型决策树](#3-模板选型决策树) | 选哪一档模板（11 套） | S6 |
 | 4 | [配音与时间轴管线](#4-配音与时间轴管线) | `_gen_tts.py` 内部流程 | S9 |
 | 5 | [后处理两关](#5-后处理两关) | 交付前的编码链 | S12 |
 | 6 | [交付物汇聚](#6-交付物汇聚) | 产物怎么归集 | S13 |
 | 7 | [时长超标回退路径](#7-时长超标回退路径) | 超时了怎么救 | S5 / S9 |
-| 8 | [风格 DNA 继承关系](#8-风格-dna-继承关系) | 6 档模板的血缘 | S6 |
+| 8 | [风格 DNA 继承关系](#8-风格-dna-继承关系) | 11 档模板的血缘 | S6 |
+| 9 | [两套渲染后端对照](#9-两套渲染后端对照) | Remotion 线 vs 单文件 HTML 线 | S6 / S7–S12 |
+
+> 图 1–3 有独立的矢量文件在 `assets/`（`01-pipeline-overview.svg` / `02-gate-protocol.svg` / `03-template-decision-tree.svg`），
+> 图 9 也有（`04-html-gsap-backend.svg`）。其余图只有 Mermaid 源码。
 
 ---
 
@@ -120,24 +124,38 @@ flowchart TD
     Q1 -->|"论文图 / 题目原图"| T4["T4 奶油论文图解档<br/>220–260s · 浅色 · 云健 +8%"]
     Q1 -->|"赛事资讯"| T5["T5 赛事资讯快报档<br/>180–200s · 10 版式"]
     Q1 -->|"方法对比 / 对错辨析<br/>评分细则 / 自查清单"| T1["T1 深空学术信息密度档<br/>185–195s · 7 版式"]
+    Q1 -->|"核心是数字<br/>不是句子"| T8["T8 数据仪表盘档<br/>120–200s · 环形 条形 折线"]
+    Q1 -->|"一句话主张<br/>不是一堆信息"| T9["T9 杂志排版档<br/>150–220s · 超大衬线标题"]
+    Q1 -->|"规定 / 细则 / 红线"| T10["T10 黑金权威档<br/>120–200s · 金线 印章"]
+    Q1 -->|"像记在笔记本上的一页"| T7["T7 纸感笔记档<br/>150–240s · 米白纸 荧光笔"]
+    Q1 -->|"要工程极轻<br/>交付可双击打开的源码"| T11["T11 单文件 HTML 档<br/>180–200s · 跨后端 · 零依赖"]
 
     T1 --> T6["T6 封面与竖版适配<br/>叠加档 · 任意档都要过"]
     T2 --> T6
     T3 --> T6
     T4 --> T6
     T5 --> T6
+    T7 --> T6
+    T8 --> T6
+    T9 --> T6
+    T10 --> T6
+    T11 --> T6
 ```
 
-**一句话记忆**：能不能用「编号 + 一句话」表达？**能 → T2，不能 → T1。** 真题 → T3，图讲解 → T4，资讯 → T5。
+**一句话记忆**：能不能用「编号 + 一句话」表达？**能 → T2，不能 → T1。**
+真题 → T3，图讲解 → T4，资讯 → T5，数字 → T8，主张 → T9，规定 → T10，笔记 → T7，**要轻 → T11**。
 
 **时长校验**（用户先给了时长时反向选档）
 
 | 用户要的时长 | 选档 |
 |---|---|
-| < 2 分钟 | T2（其他档撑不到那么短） |
-| 2–3 分钟 | T5，或 T1 压到 185s |
+| 少于 2 分钟 | T2（其他档撑不到那么短） |
+| 2–3 分钟 | T5 / T7 / T8 / T9 / T10 / **T11**，或 T1 压到 185s |
 | 3–4 分钟 | T4 |
 | 4–6 分钟 | T3 |
+
+⚠️ **T11 是唯一的跨后端档**：其余 10 档都是 Remotion 工程（`src/remotion/*.tsx` + `timing.json` 帧驱动），
+T11 走单文件 HTML + GSAP 绝对秒时间线 + HyperFrames 渲染。选它之后 S7–S12 全换一套做法，见[图 9](#9-两套渲染后端对照)。
 
 ---
 
@@ -232,8 +250,11 @@ flowchart TD
 |---|---|---|
 | `landscape_with_bgm.mp4` | `横版_1920x1080.mp4` | `landscape_with_bgm.mp4` |
 | `portrait_with_bgm.mp4` | `竖版_1080x1920.mp4` | （不进交付包） |
-| `cover43.png` | `封面_4比3.png` | `封面16x9.png` |
+| `cover43.png` | `封面_4比3.png` | `封面4比3.png` |
 | `cover34.png` | `封面_3比4.png` | `封面3比4.png` |
+
+> ⚠️ **2026-09-21 修**：交付包那列原先写成 `封面16x9.png`，尺寸栏明明写着 1200×900，命名自相矛盾。
+> 照着做会**误出一张 1920×1080 的 16:9 封面**（华为杯模板期就踩了这个坑）。**封面只出 4:3 与 3:4 两种，不出 16:9。**
 
 ---
 
@@ -272,14 +293,19 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    DNA["深空学术 × 玻璃拟态<br/>theme.ts 设计令牌"] --> T1["T1 信息密度档<br/>6 + number 版式<br/>8 色 accent"]
-    DNA --> T2["T2 大字清单档<br/>1 版式 NumberView<br/>3 档语气 呼吸光晕"]
-    DNA --> T5["T5 资讯快报档<br/>10 版式<br/>countdown/ladder/gantt/alert"]
+    DNA["深空学术 × 玻璃拟态<br/>#070B18 · theme.ts 设计令牌"] --> T1["T1 信息密度档<br/>6 + number 版式 · 8 色 accent"]
+    DNA --> T2["T2 大字清单档<br/>1 版式 · 3 档语气"]
+    DNA --> T5["T5 资讯快报档<br/>10 版式"]
 
-    T1 --> T3["T3 真题长拆解档<br/>沿用 T1 版式序<br/>+ 数值口径分级"]
-    T1 --> T6["T6 封面与竖版适配<br/>封面公式 / 竖版 8 项清单"]
+    T1 --> T3["T3 真题长拆解档<br/>沿用 T1 版式序 · 数值口径分级"]
+    T1 --> T6["T6 封面与竖版适配<br/>叠加档 · 封面公式 + 竖版 8 项"]
 
-    Cream["奶油极简<br/>#FDFBF4 浅色"] --> T4["T4 奶油论文图解档<br/>1 版式 左文右图<br/>云健 +8%"]
+    Navy["海军蓝数据风<br/>#0A1628"] --> T8["T8 数据仪表盘档<br/>3 版式 · 等宽数字"]
+    Cream["奶油极简<br/>#FDFBF4 浅色"] --> T4["T4 奶油论文图解档<br/>1 版式 · 云健 +8%"]
+    Paper["纸感笔记<br/>#FAF7F0 米白纸"] --> T7["T7 纸感笔记档<br/>1 版式 · 宋体 + 楷体批注"]
+    White["纯白杂志<br/>#FFFFFF"] --> T9["T9 杂志排版档<br/>4 版式 · 超大衬线标题"]
+    Ink["近黑 + 金<br/>#0B0B0D"] --> T10["T10 黑金权威档<br/>1 版式 · 金线 + 印章"]
+    HTMLB["单文件 HTML + GSAP<br/>HyperFrames 合成契约"] --> T11["T11 单文件 HTML 档<br/>6 版式 · 绝对秒时间线"]
 ```
 
 **读法**
@@ -287,4 +313,79 @@ flowchart LR
 - **T1 是主干**：T3、T5、T6 都从它派生。要改配色 / 字体 / 动效语法，改 `theme.ts` 一处，T1/T3/T5 一起变。
 - **T2 是主干的分支**：共用深空底色，但把「8 色 accent」简化成「3 档语气」，换场景只换一个 `tone`，认知成本更低。
 - **T5 是 T1 的版式扩充**：同一套骨架，多了 `countdown` / `timeline` / `ladder` / `gantt` / `alert` 五个资讯类版式。
-- **T4 是独立血统**：浅色奶油底 + 云健音色 + 慢速 +8% + 句子索引硬编码章节，跟深空系没有共用代码。
+- **T4 / T7 / T8 / T9 / T10 各自独立血统**：底色、字体、动效强度都不共用代码，换档等于换一套视觉语言。
+- **T11 血统最特殊**：它连**渲染后端**都换了（HTML + GSAP 而不是 Remotion），只有配色气质跟 T1 同族。详见[图 9](#9-两套渲染后端对照)。
+- ⚠️ **浅色档（T4 / T7 / T9）和深色档不要混**，中途换底色会让观众觉得换了个视频。
+
+---
+
+## 9. 两套渲染后端对照
+
+> 矢量图：[`assets/04-html-gsap-backend.svg`](../assets/04-html-gsap-backend.svg)
+> 来源：第七期《数模国赛避坑指南》的真源工程（185.5s / 5565 帧 / 11 场景），已交付。
+
+```mermaid
+flowchart TD
+    subgraph REM["T1–T10 · Remotion 后端 · 工程重"]
+        direction TB
+        R1["src/remotion/*.tsx"]
+        R2["timing.json<br/>帧驱动 · start_frame"]
+        R3["podcast.txt<br/>SECTION 分块"]
+        R4["node_modules<br/>npm install 约 3–5 分钟"]
+    end
+
+    subgraph HTML["T11 · 单文件 HTML + GSAP · 零依赖"]
+        direction TB
+        H1["index.html<br/>一个文件装下全部场景"]
+        H2["scripts/sN.txt<br/>一场景一文件"]
+        H3["audio/sN.wav + bgm.mp3<br/>分段配音"]
+        H4["tts_models/<br/>Kokoro ONNX 离线"]
+    end
+
+    R1 --> Render["渲染 + 后处理两关<br/>loudnorm → bt709"]
+    R2 --> Render
+    R3 --> Render
+    R4 --> Render
+    H1 --> Render
+    H2 --> Render
+    H3 --> Render
+    H4 --> Render
+
+    Render --> Out["成品 mp4<br/>yuv420p tv, bt709"]
+```
+
+**一句话**：两条线的**产物规格完全一样**，差的是工程形态与时间轴模型。
+
+### 差异对照
+
+| 维度 | T1–T10（Remotion） | T11（HTML + GSAP） |
+|---|---|---|
+| 工程形态 | `src/remotion/*.tsx` + `node_modules` | **单个 `index.html`**，无构建 |
+| 时间轴 | `timing.json` 帧驱动（`start_frame`） | **GSAP 绝对秒**，秒数手填 |
+| 场景切换 | React 组件按帧判定 | CSS `z-index` + `opacity` + 转场 tween |
+| 字幕 | `Subtitle.tsx` 句级硬切 / 词边界 | **无字幕组件** |
+| 口播稿 | `podcast.txt`，`[SECTION:name]` 分块 | **`scripts/sN.txt`**，一场景一文件 |
+| 配音 | edge-tts（云希 / 云健）+ `_gen_tts.py` | **Kokoro ONNX 离线**（云健，speed 1.08） |
+| 数据同步门禁 | `_check_sync.py` 比对 SECTION 与 key | **无自动门禁**，靠 `TIMELINE.md` 人工对齐 |
+| 渲染 | `npx remotion render` | `npx hyperframes render` |
+| 交付文档 | 4 份（思路 / 时间线 / publish_info / 发布文案） | 2 份（**TIMELINE.md** + 发布文案） |
+
+### 选了 T11 之后，S7–S12 怎么变
+
+| 步 | Remotion 线 | T11 变体 |
+|---|---|---|
+| S7 工程初始化 | 复制骨架 + `npm install` | 复制 `templates/code/html-gsap/` + 拷 `model.onnx`/字体/bgm，**无依赖安装** |
+| S8 内容配置 | 改 `episode_data.ts` | 改 `index.html` 的 DOM + CSS + GSAP 段；写 `scripts/sN.txt` |
+| S9 配音 | `_gen_tts.py`（edge-tts） | `python tts_models/gen_tts_html.py . zm_yunjian 1.08` |
+| S9 门禁 | 三条（时长 / 体检 / 拼接） | 回填实测时长到 `index.html` 音频块 + `TIMELINE.md`，**两处必须一致** |
+| S10 目检 | studio + `remotion still` | `npx hyperframes lint` → `check` → `preview` |
+| S11 渲染 | `npx remotion render` | `npx hyperframes render --quality high` |
+| S12 后处理 | 两关（loudnorm + bt709） | **同样两关，不能省** |
+
+### T11 的三个已知缺口（首次使用必须补）
+
+1. 真源**未过 HyperFrames `lint`**：用了 `repeat: -1`（禁无限重复）和正文 `<br>`（禁）。骨架已改成有限次数 + 拆 block，但**骨架本身还没跑过完整渲染**。
+2. **没有数据同步门禁** —— 段数（`scripts/` 文件数）= 场景数 = `<audio>` 数 = GSAP 段数，四处必须相等，要自己写个 5 行脚本核。
+3. 后处理两关在真源 `TIMELINE.md` 里**没有记录**，接入 S12 时必须补做并回填实测值。
+
+> 另外两处如实记录的缺失：真源发布文案**缺「章节时间戳」和「置顶评论」**（S13 门禁要求）；真源**没有竖版正片**。

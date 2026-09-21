@@ -1,13 +1,13 @@
 # mcm-video-pipeline
 
-> 数模自媒体视频生产线 · 13 步流程 + 10 套模板 + 强制确认门
-> 从 10+ 期已交付视频的实测参数里抽出来的可复用工作流
+> 数模自媒体视频生产线 · 13 步流程 + 11 套模板 + 强制确认门
+> 从 13 期已交付视频的实测参数里抽出来的可复用工作流
 
 [English](README.en.md) | **中文**
 
 一套给 AI Agent 用的视频制作 Skill。它不是「提示词合集」，而是把一条真实跑通的视频生产线固化下来：每一步该产出什么、参数是多少、哪一步不能跳、踩过什么坑，全部写死。
 
-所有参数都是**实测值**，来自 `第十二期_论文逐段实战`、`第十三期_交卷之后`、`特别期_A题求解思路`、`特别期_B题开打指南`、`特别期_开赛前8小时`、`特别期_华为杯研赛资讯` 等已交付项目。
+所有参数都是**实测值**，来自 `第十二期_论文逐段实战`、`第十三期_交卷之后`、`特别期_A题求解思路`、`特别期_B题开打指南`、`特别期_开赛前8小时`、`特别期_华为杯研赛资讯`、`第七期_数模国赛避坑指南` 等已交付项目。
 
 ![总体流程](assets/01-pipeline-overview.svg)
 
@@ -27,6 +27,7 @@
 - [已知坑](#已知坑)
 - [仓库结构](#仓库结构)
 - [快速开始](#快速开始)
+- [更新日志](CHANGELOG.md)
 
 ---
 
@@ -233,7 +234,12 @@ flowchart TD
 
 按 [模板库](#模板库) 的决策树选一档，读对应 `templates/T*.md` 再执行。
 
+**什么时候主动提 T11**：用户说「不想装 node_modules」「想要能双击打开的源码」「交付源码给别人看」「这期想快点出」——
+或内容本身是**并列清单**（N 个坑 / N 条规则）而不是推导链。T11 工程极轻，代价是没有字幕组件、没有自动同步门禁。
+
 ### S7 · 工程初始化
+
+**T1–T10（Remotion 线）**
 
 1. 复制骨架到 `<期数>_<主题>/项目源码/mcm-video-temp/`
 2. 删掉 `videos/` 里的旧产物，新建 `videos/<新ep名>/`
@@ -243,6 +249,15 @@ flowchart TD
    - `_gen_tts.py` → `BASE = os.path.join(HERE, "videos", "<新ep名>")`
 4. `npm install`（或用 junction 指向已装好的期，省 3–5 分钟）
 5. 冒烟：`npx remotion compositions src/remotion/index.ts` —— 能列出 4 个 Composition 就算通
+
+**T11（单文件 HTML 线）**
+
+1. 复制 `templates/code/html-gsap/` 到 `<期数>_<主题>/项目源码/`
+2. 从任一期已交付源码拷大文件：`tts_models/model.onnx`（约 310MB）、`voices_zf.npz`、`fonts/noto-sc-*.woff2`、`bgm.mp3`
+3. **无依赖安装**
+4. 冒烟：本地起个静态服务打开 `index.html`，确认字体没掉成方框
+
+完整 7 步见 `templates/code/html-gsap/README.md`。
 
 ### S8 · 内容配置
 
@@ -291,7 +306,7 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 
 ## 模板库
 
-10 套模板。前 6 套有**已交付的真源项目**（参数是实测值）；后 4 套是**新设计的样式**，已渲染静帧验证，但还没跑过完整视频。
+11 套模板。7 套有**已交付的真源项目**（参数是实测值）；4 套是**新设计的样式**，已渲染静帧验证，但还没跑过完整视频。
 
 ### 已有真源（实测参数）
 
@@ -303,6 +318,17 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 | T4 | `templates/T4-奶油论文图解.md` | 论文截图 / 题目原图逐句讲解，浅色档 | 220–260s | 6 章节 / 30 句 | 真题拆解 242.15s |
 | T5 | `templates/T5-赛事资讯快报.md` | 赛程 / 报名 / 奖金 / 资格 资讯速报 | 180–200s | 10 | 华为杯研赛资讯 186s |
 | T6 | `templates/T6-封面与竖版适配.md` | **叠加档**，给任意档补封面 / 竖版 | — | — | 全期通用 |
+| **T11** | `templates/T11-单文件HTML-GSAP.md` | **跨后端**：单文件 HTML + GSAP，零依赖 | 180–200s | 11 | 第七期 185.5s / 5565 帧 |
+
+### ★ T11 是唯一不走 Remotion 的档
+
+T1–T10 全部基于 Remotion（`src/remotion/*.tsx` + `timing.json` 帧驱动）。
+T11 走**单文件 HTML + GSAP 绝对秒时间轴 + HyperFrames 渲染**，工程形态、时间轴模型、配音管线三样全不一样。
+
+![两套渲染后端对照](assets/04-html-gsap-backend.svg)
+
+骨架在 `templates/code/html-gsap/`（9 项零依赖文件，含实例化 7 步的 README）。
+完整差异对照见 [`docs/flowcharts.md` 图 9](docs/flowcharts.md#9-两套渲染后端对照)。
 
 ### 新设计样式（已渲染验证，未跑完整视频）
 
@@ -316,6 +342,7 @@ npx remotion still  src/remotion/index.ts Cover34        out/封面3比4.png
 > ✅ **T7–T10 的状态**：四套都**真配了 TTS 音频、真跑了完整渲染、真过了后处理两关**，成品全部达标 `yuv420p(tv, bt709)`。
 > ⚠️ 仍缺：竖版适配、封面设计、长片（185s+）压测。
 > 组件源码在 `templates/code/`，每套都有**单页演示**和**完整视频组件**两个形态。
+> T11 的状态不一样——它有**已交付真源**（第七期 185.5s）和 **4:3 + 3:4 封面**，但骨架**还没跑过完整渲染**，见下方说明。
 
 ### 新样式预览（实拍静帧）
 
@@ -385,6 +412,7 @@ flowchart TD
     Q1 -->|"核心是一句话主张"| T9["T9 杂志排版档<br/>150–220s · 分栏排版"]
     Q1 -->|"规定 / 细则 / 红线"| T10["T10 黑金权威档<br/>120–200s · 印章条款"]
     Q1 -->|"像一页学习笔记"| T7["T7 纸感笔记档<br/>150–240s · 荧光笔批注"]
+    Q1 -->|"要工程极轻 / 交付可双击打开的源码"| T11["T11 单文件 HTML 档<br/>180–200s · 跨后端 · 零依赖"]
     Q1 -->|"方法对比 / 对错辨析<br/>评分细则 / 自查清单"| T1["T1 深空学术信息密度档<br/>185–195s · 7 版式"]
 
     T1 --> T6["T6 封面与竖版适配<br/>叠加档 · 任意档都要过"]
@@ -396,6 +424,7 @@ flowchart TD
     T8 --> T6
     T9 --> T6
     T10 --> T6
+    T11 --> T6
 ```
 
 ### 按「想要的感觉」选档
@@ -411,12 +440,11 @@ flowchart TD
 | 精密、科技、数据说话 | **T8** |
 | 高级、克制、品牌向 | **T9** |
 | 庄重、正式、有官方分量 | **T10** |
-
-十档的完整差异矩阵（底色 / 主色 / 字体 / 版式数 / 字幕模式 / rate / GAP / 动效强度）见 [`templates/README.md`](templates/README.md)。
+| **工程极轻、源码要能双击打开、并列清单** | **T11** |
 
 ### 视觉差异速查
 
-十档的完整差异矩阵（底色 / 主色 / 字体 / 版式数 / 字幕模式 / TTS 音色 / rate / GAP / 动效强度）见 [`templates/README.md`](templates/README.md#三十档视觉差异速查)。
+十一档的完整差异矩阵（底色 / 主色 / 字体 / 版式数 / 字幕模式 / TTS 音色 / rate / GAP / 动效强度 / 后端）见 [`templates/README.md`](templates/README.md#三十一档视觉差异速查)。
 
 一个必须记住的约束：**浅色档（T4 / T7 / T9）和深色档（其余）不要混**。中途换底色会让观众觉得换了个视频。
 
@@ -570,7 +598,7 @@ flowchart TD
 
 ## 已知坑
 
-21 条实测坑完整版见 [`references/gotchas.md`](references/gotchas.md)。最常踩的 8 条：
+27 条实测坑完整版见 [`references/gotchas.md`](references/gotchas.md)。最常踩的 9 条：
 
 | # | 坑 | 修法 |
 |---|---|---|
@@ -582,6 +610,7 @@ flowchart TD
 | 6 | 封面尺寸写错 | 以实物为准：1200×900 / 1080×1440 |
 | 7 | `podcast.txt` 显示乱码 | 是控制台编码问题，文件本身 UTF-8 正常 |
 | 8 | 规则类表述强于官方原文 | 一律先对官方原文再写进口播稿 |
+| 9 | **Kokoro 合成中文整段连读** | tokenizer 不认全角标点 → 按标点分段合成 + 段间插受控停顿（第 26 条） |
 
 ### 环境前置（Windows 实测）
 
@@ -611,11 +640,11 @@ mcm-video-pipeline/
 ├─ SKILL.md                       ← Agent 主入口：13 步 + 确认门协议
 ├─ references/
 │  ├─ pipeline.md                 全流程技术规格、参数速查、动效语法
-│  ├─ gotchas.md                  环境前置 + 21 条实测坑
+│  ├─ gotchas.md                  环境前置 + 27 条实测坑
 │  ├─ script-and-compliance.md    口播稿规则与合规红线
 │  └─ delivery.md                 4 份交付文档模板
 ├─ templates/
-│  ├─ README.md                   模板选用决策树 + 十档差异矩阵
+│  ├─ README.md                   模板选用决策树 + 十一档差异矩阵
 │  ├─ T1-深空学术-信息密度.md
 │  ├─ T2-大字清单-紧迫.md
 │  ├─ T3-真题长拆解.md
@@ -626,28 +655,44 @@ mcm-video-pipeline/
 │  ├─ T8-数据仪表盘.md            │ 新设计样式
 │  ├─ T9-杂志排版.md              │ 已渲染验证，未跑完整视频
 │  ├─ T10-黑金权威.md             ┘
-│  └─ code/                       可运行 Remotion 组件源码
+│  ├─ T11-单文件HTML-GSAP.md      ★ 跨后端：HTML + GSAP，零依赖
+│  └─ code/                       可运行源码
 │     ├─ README.md                怎么跑、怎么换期、修过的 4 个 bug
 │     ├─ src/remotion/
-│     │  ├─ shared/               场景引擎（四套共用）
+│     │  ├─ shared/               场景引擎（T4 / T7–T10 共用）
 │     │  │  ├─ types.ts           TimingData / Section / Sentence
 │     │  │  ├─ scene.ts           useScene() 按帧定位场景
 │     │  │  └─ Subtitle.tsx       句级实时刻硬切字幕条
 │     │  ├─ demoData.ts           演示内容
 │     │  ├─ T7PaperNote.tsx       单页演示
 │     │  ├─ T7PaperNoteVideo.tsx  完整视频组件
+│     │  ├─ T4CreamPaperVideo.tsx ┐ T4 只有完整视频组件
+│     │  ├─ T4RepoTree.tsx        │ （无单页演示版）
+│     │  ├─ T4YearTable.tsx       │
+│     │  ├─ T4plan.example.ts     ┘ 复制成 plan.ts 用
 │     │  └─ …（T8 / T9 / T10 同构）
+│     ├─ html-gsap/               ★ T11 的零依赖骨架（9 项）
+│     │  ├─ README.md             实例化 7 步 + 命名规范 + 注释习惯
+│     │  ├─ index.html            主合成骨架
+│     │  ├─ tts_models/           分段合成脚本 + edge-tts 备选
+│     │  ├─ scripts/s1.txt        口播分段模板
+│     │  ├─ cover43.html / cover34.html
+│     │  ├─ voice_demo.html       音色试听页
+│     │  ├─ TIMELINE.md           时间线核对表模板
+│     │  └─ 发布文案.md
 │     └─ videos/demo/timing.json  演示用时间轴
 ├─ docs/
 │  └─ flowcharts.md               全部流程图 + Mermaid 源码
 ├─ tools/
 │  ├─ validate-mermaid.mjs        用官方解析器校验 Mermaid 语法
 │  ├─ raster-svg.mjs              把 SVG 光栅化成 PNG 以便目检
+│  ├─ check-eol.mjs               检查文本文件有没有混进 CRLF
 │  └─ README.md                   为什么要校验、怎么用、实现上的两个坑
 └─ assets/
    ├─ 01-pipeline-overview.svg    总体流程
    ├─ 02-gate-protocol.svg        确认门协议
-   ├─ 03-template-decision-tree.svg  模板决策树
+   ├─ 03-template-decision-tree.svg  模板决策树（11 套）
+   ├─ 04-html-gsap-backend.svg    ★ 两套渲染后端对照
    ├─ preview/                    十套样式的实拍静帧 + 视频组件抽帧
    │  ├─ T1-T10 各一张
    │  └─ video/                   同场景四风格对比
@@ -656,12 +701,13 @@ mcm-video-pipeline/
 
 ### 推送前建议先过一遍图表校验
 
-仓库里有 19 个 Mermaid 块和 3 张手写 SVG。Mermaid 节点标签里的**裸尖括号**（如 `RMS<0.20`、`GAP>0`）会被 GitHub 当成 HTML 标签，**整块图渲染失败**。用 `tools/` 里的脚本先验一遍：
+仓库里有 20 个 Mermaid 块和 4 张手写 SVG。Mermaid 节点标签里的**裸尖括号**（如 `RMS<0.20`、`GAP>0`）会被 GitHub 当成 HTML 标签，**整块图渲染失败**。用 `tools/` 里的脚本先验一遍：
 
 ```bash
 npm install mermaid jsdom @resvg/resvg-js
-node tools/validate-mermaid.mjs .        # 19/19 通过才算过
+node tools/validate-mermaid.mjs .        # 20/20 通过才算过
 node tools/raster-svg.mjs . _preview     # 打开 _preview/ 目检一遍
+node tools/check-eol.mjs .               # 确认没混进 CRLF
 ```
 
 细节见 [`tools/README.md`](tools/README.md)。

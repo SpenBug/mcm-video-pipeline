@@ -326,3 +326,130 @@ for p in pathlib.Path(".").rglob("*"):
 但**工作区仍是 CRLF**，所以本地校验脚本还是会报，最好从写入端就修掉。
 
 **自查命令**：`node tools/check-eol.mjs <仓库根目录>`（本仓库已带）
+
+---
+
+## 22. 封面标题是矢量图时，改年份要重制 PDF 而不是改字（2026-09-21 实测）
+
+**场景**：华为杯模板 `figures/title.pdf` 里的届数要改（第二十一届 → 第二十三届）。
+
+**先探明结构再动手**：
+
+- `pdfinfo -box` 显示 MediaBox 是**整页 A4**（595.32×841.92），靠 CropBox `149.48 547.62 468.12 634.42` 裁到标题区（318.64×86.80pt）。所以它既是「标题条」又是「整页封面截图」。
+- `pdffonts` 看到 `STXinwei`（华文新魏）→ 字形是文本不是路径。
+- `pdftotext -bbox` 拿逐字坐标 → 反推三行基线 y = 618.34 / 586.06 / 554.83，字号 18 / 21.96pt。
+
+**为什么不能「替换字节」**：`pdffonts` 的前缀（如 `BCDFEE+STXinwei`）说明是**子集字体**。用 fontTools 解析嵌入的字体流验证：cmap 只有 34 条，`一 U+4E00 -> uni4E00` 有，`三 U+4E09 -> None` **没有** → 就算把 CID 字节换成「三」的 GID，字形也不存在。
+
+**修法（LaTeX 重制）**：用 `geometry` 指定 A4 + TikZ `overlay` 绝对定位 + `\special{pdf:put @thispage <</CropBox [...]>>}` 复刻原 box 结构：
+
+```latex
+\documentclass{article}
+\usepackage[paperwidth=595.32pt,paperheight=841.92pt,margin=0pt]{geometry}
+\usepackage{xeCJK}
+\setCJKmainfont{STXinwei}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\pagestyle{empty}
+\begin{document}
+\special{pdf:put @thispage <</CropBox [149.48 547.62 468.12 634.42]>>}
+\begin{tikzpicture}[remember picture, overlay]
+\node[anchor=base west, inner sep=0, outer sep=0]
+  at ($(current page.south west)+(151.595pt,586.06pt)$)
+  {\fontsize{21.96pt}{21.96pt}\selectfont “华为杯”第二十三届中国研究生};
+\end{tikzpicture}
+\end{document}
+```
+
+**两个必须知道的点**：
+
+1. **TikZ `current page` 要编译两遍**，单遍会把节点丢到页面外（第一次编译时 `current page` 未定义）。
+2. **xeCJK 对行首引号做标点压缩**：`anchor=base west` 对齐的是 bbox 左缘，压缩后引号字形左移，实测**偏移 13.575pt**。`\mbox{}` / `\hbox{}` / `\null` / `\leavevmode` **四种前缀全部无效**（实测 xMin 都是 124.445，与纯引号行完全一致）→ 只能数值补偿：目标 xMin=138.02，就把节点 x 设成 `138.02 + 13.575 = 151.595`。
+
+**验收**：`pdftotext -bbox` 比对三行 xMin，与原版差 < 0.05pt 即为对位成功。
+
+**顺带**：改年份要分清「赛事标识」和「历史事实」——封面届数、格式说明年份该改；`gmcm.bst` 版本号、`cls` 版本号、`reference.bib` 文献年份**一律不动**（改了等于伪造引用）。
+
+## 23. `cp -r SRC DST` 在 DST 已存在时会嵌套（2026-09-21）
+
+`cp -r "src_dir" "$BASE/模板源码/GMCMthesis"` 若目标已存在，会生成 `$BASE/模板源码/GMCMthesis/src_dir名/` 的重复副本。
+
+**清理**：`rm -rf` 中文路径会被安全删除机制拦下，改用 PowerShell：
+
+```powershell
+[System.IO.Directory]::Delete($nested, $true)
+```
+
+## 24. edge-tts 网络中断后如何「只重做改过的段」（2026-09-21）
+
+**症状**：`ClientConnectorError: Cannot connect to host speech.platform.bing.com:443`，脚本内置 15 次重试仍失败（代理不稳，间歇性）。
+
+**为什么不能直接重跑**：`step_tts()` 的缓存失效条件是「无指纹 / md5 变了 / 有 wav 比稿子旧」，命中就 `shutil.rmtree(TMP)` **全部重做**。
+
+**续跑姿势**（本次省下约 2 分钟）：
+
+```bash
+cd videos/<ep>/_tts_tmp
+rm -f 02_cover.*                      # 删掉「改过的那一段」
+touch *.wav                           # 让未改段 mtime 新于稿子，避开 _stale 判定
+python -c "import hashlib; h=hashlib.md5(open('../podcast.txt','rb').read()).hexdigest(); open('_src.md5','w').write(h)"
+```
+
+再重跑 `_gen_tts.py` 即可：已存在且未改的段会被 `tts_one()` 的断点续传直接复用。
+
+**验证英文词读法**：`_tts_tmp/NN_name.words.json` 是词级时间戳（`{t, d, text}`），比听音频更快 —— `LaTeX 0.39s` / `xelatex 0.50s` / `logo 0.45s` 都说明是**单次发音**而非逐字母。
+
+## 25. T4 档没有现成的完整视频组件（2026-09-21）
+
+`templates/code/` 里只有 T7–T10 的 `*Video.tsx`（读 timing.json 按帧切场景 + 句级字幕）。**T4 只有 `_tools_pipeline/EpisodeScene.tsx` 单页演示版**，且它依赖 `./cues` 和 `./displayPlan` 两个在该目录里**并不存在**的数据文件。
+
+**自建姿势**：保留 T4 的视觉语言（奶油底 `#FDFBF4` + 44px 网格 + 顶底渐变彩条 + 顶部章节标签 + 左文右图 + 底部深色字幕条），把数据源换成 `timing.json` 的 `sections[].sentences[]`，另建 `plan.ts` 定义每个 section 的 `{label, chapter, note, imgs[], hue, mode}`。`mode` 支持 `open`（整屏图）/ `split`（左文右图）/ 自定义版式（如文件树、对比表）。
+
+**版式两个必踩的坑**：
+
+- 顶部标签容器用 `AbsoluteFill + height` 会让 `justify-content: space-between` **失效**（标签和品牌挤在一起）→ 改用 `position: absolute; top/left/right: 0` + `boxSizing: "border-box"`。
+- 右侧 A4 竖版页图在 36% 宽卡片里高度会到 943px，**超出 750px 内容区被字幕遮住** → 给 `img` 加 `maxHeight: 690` 这样的**明确像素值**（`maxHeight: "100%"` 在 flex 链里常失效）。
+
+**工程骨架复用**：复制最近一期已跑通的 `项目源码/mcm-video-temp/`，`node_modules` 用 junction 指向旧期（`New-Item -ItemType Junction`），省掉 npm install。
+
+
+## 26. Kokoro 合成中文「整段连读」——tokenizer 不认全角标点（2026-09-21，来自 T11 真源）
+
+**症状**：Kokoro ONNX 合成的中文配音听不出句读，整段一口气念完，只有句尾有停顿。
+
+**根因**：Kokoro 的 ONNX tokenizer **不认识中文全角标点**（`。` `，` `、` `：` `！` 全部 tokenize 为空），misaki 输出的停顿标记被丢弃，模型只保留句尾收束声调产生的停顿。
+
+**修法**（`templates/code/html-gsap/tts_models/gen_tts_html.py`）：
+
+```
+按标点切句（re.split 保留标点） → 每句单独 g2p + ONNX 合成
+                              → trim() 裁掉每段首尾静音
+                              → 段间插入受控停顿
+```
+
+```python
+PAUSE = {"。": 0.45, "！": 0.45, "？": 0.45, "；": 0.45, "：": 0.30, "，": 0.18, "、": 0.15}
+```
+
+⚠️ **`trim()` 不能省**。模型每段自带尾音，不裁掉就会和手插的停顿叠成空拍（听起来像卡顿）。
+
+**验证方法**：合成「今天，天气很好。评委看了摘要，决定生死。」，应听到 **4 处**自然停顿，而不是仅首尾 2 处。
+
+**别用空格代替标点**：空格会被 tokenize 掉，等于没加。
+
+## 27. 移植第七期（T11）到正式流水线要补的三个门禁（2026-09-21）
+
+第七期真源能渲染成功，但**没有过 HyperFrames 的 `lint`**，也没有 Remotion 线那样的自动门禁。照抄源码前先补：
+
+| 缺口 | 真源写法 | 正确做法 |
+|---|---|---|
+| 无限动画 | `repeat: -1`（呼吸 / 浮动） | `lint` 禁无限重复（破坏渲染确定性）→ 改有限次数：`repeat = ceil(场景剩余秒数 / 周期) - 1` |
+| 正文换行 | `<br>` 写在 `.tl-seg` / `.outro-cta` 里 | 正文禁 `<br>` → 拆多个 block 元素或用 flex 分行 |
+| 数据同步 | 无脚本 | 段数（`scripts/` 文件数）= 场景数 = `<audio>` 数 = GSAP 段数，**四处必须相等**，写 5 行脚本核 |
+
+**另外两处如实记录的缺失**：
+
+- 真源 `TIMELINE.md` 只写「渲染 output.mp4（h264+aac）」，**没有 loudnorm / bt709 记录** → 接入 S12 时按流水线标准补做两关，并回填实测值。
+- 真源发布文案**缺「章节时间戳」和「置顶评论」**，S13 门禁要求 → 模板已加占位。
+
+**其他契约提醒**：`<audio>` / `<video>` 必须带 `id`（否则 mixer 收不到 → 渲染静音）；**禁 `crossorigin`**；别给元素写 CSS 初始 `transform` 再对它做 GSAP tween（`gsap_css_transform_conflict`），初始态写进 `fromTo`。
